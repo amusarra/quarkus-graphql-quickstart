@@ -1,0 +1,39 @@
+---
+# Secret for the database username and password
+kind: Secret
+apiVersion: v1
+metadata:
+  name: db-username-password
+data:
+  db-password: cXVhcmt1cw==
+  db-username: cXVhcmt1cw==
+type: Opaque
+---
+# Secret for the database URL
+kind: Secret
+apiVersion: v1
+metadata:
+  name: db-url
+data:
+  db-url: amRiYzpwb3N0Z3Jlc3FsOi8vcG9zdGdyZXNxbDo1NDMyL3F1YXJrdXNfZ3JhcGhxbA==
+type: Opaque
+---
+# Secret for the keystore password
+kind: Secret
+apiVersion: v1
+metadata:
+  name: app-keystore-password
+data:
+  app-keystore-password: WVhCd0xXdGxlWE4wYjNKbExuQXhNZz09
+type: Opaque
+
+---
+# Secret for the keystore password
+kind: Secret
+apiVersion: v1
+metadata:
+  name: minio-access-key
+data:
+  minio-user-access-key: bWluaW8tYWRtaW4=
+  minio-user-secret-key: bWluaW8tYWRtaW4=
+type: Opaque

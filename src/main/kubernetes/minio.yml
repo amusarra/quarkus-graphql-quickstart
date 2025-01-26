@@ -1,0 +1,113 @@
+# PersistentVolumeClaim for MinIO storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minio-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Mi
+  storageClassName: gp3
+---
+# Deployment configuration for MinIO
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+  labels:
+    app: minio
+    app.kubernetes.io/name: minio
+    app.kubernetes.io/version: latest
+    app.kubernetes.io/component: objectstore
+    app.kubernetes.io/part-of: minio
+    app.openshift.io/instance: minio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+        - name: minio
+          ports:
+            - containerPort: 9000
+              name: minio
+            - containerPort: 9090
+              name: minio-console
+          image: quay.io/minio/minio:latest
+          command:
+            - /bin/bash
+            - -c
+          args:
+            - minio server /data --console-address :9090
+          env:
+            - name: MINIO_ROOT_USER
+              value: "minio-admin"
+            - name: MINIO_ROOT_PASSWORD
+              value: "minio-admin"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: minio-pvc
+---
+# Service configuration for MinIO
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio
+  labels:
+    app: minio
+spec:
+  selector:
+    app: minio
+  ports:
+    - name: minio
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+    - name: minio-console
+      protocol: TCP
+      port: 9090
+      targetPort: 9090
+  clusterIP: None
+---
+# Route configuration for MinIO main service
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: minio
+  labels:
+    app: minio
+spec:
+  to:
+    kind: Service
+    name: minio
+  port:
+    targetPort: 9000
+  tls:
+    termination: edge
+---
+# Route configuration for MinIO console
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: minio-console
+  labels:
+    app: minio
+spec:
+  to:
+    kind: Service
+    name: minio
+  port:
+    targetPort: 9090
+  tls:
+    termination: edge
