@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 Antonio Musarra's Blog.
+ * SPDX-License-Identifier: MIT
+ */
 package it.dontesta.labs.quarkus.graphql.ws.resources.endpoint.repository.v1;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 Antonio Musarra's Blog.
+ * SPDX-License-Identifier: MIT
+ */
 package it.dontesta.labs.quarkus.graphql.ws.resources.endpoint.s3.v1;
 
 import it.dontesta.labs.quarkus.graphql.s3.service.MinioService;
