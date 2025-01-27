@@ -3,6 +3,8 @@ package it.dontesta.labs.quarkus.graphql.ws.resources.endpoint.repository.v1;
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Editor;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import java.net.URI;
 import java.util.List;
 
 @Path("/editors")
@@ -22,9 +24,9 @@ public class EditorResource {
     }
 
     @POST
-    public Editor create(Editor editor) {
+    public Response create(Editor editor) {
         editor.persist();
-        return editor;
+        return Response.created(URI.create("/editors/" + editor.id)).build();
     }
 
     @PUT

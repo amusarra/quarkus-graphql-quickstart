@@ -4,6 +4,7 @@
  */
 package it.dontesta.labs.quarkus.graphql.ws.resources.endpoint.repository.v1;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Author;
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Book;
 import jakarta.transaction.Transactional;
@@ -17,6 +18,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import java.net.URI;
 import java.util.List;
 
 @Path("/books")
@@ -37,9 +40,9 @@ public class BookResource {
 
     @POST
     @Transactional
-    public Book create(Book book) {
+    public Response create(Book book) {
         book.persist();
-        return book;
+        return Response.created(URI.create("/books/" + book.id)).build();
     }
 
     @PUT

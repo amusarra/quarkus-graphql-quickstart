@@ -3,6 +3,8 @@ package it.dontesta.labs.quarkus.graphql.ws.resources.endpoint.repository.v1;
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Author;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import java.net.URI;
 import java.util.List;
 
 @Path("/authors")
@@ -22,9 +24,9 @@ public class AuthorResource {
     }
 
     @POST
-    public Author create(Author author) {
+    public Response create(Author author) {
         author.persist();
-        return author;
+        return Response.created(URI.create("/authors/" + author.id)).build();
     }
 
     @PUT
