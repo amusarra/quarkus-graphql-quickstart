@@ -4,7 +4,6 @@
  */
 package it.dontesta.labs.quarkus.graphql.ws.resources.endpoint.repository.v1;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Author;
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Book;
 import jakarta.transaction.Transactional;
@@ -26,8 +25,14 @@ import java.util.List;
 public class BookResource {
 
     @GET
-    public List<PanacheEntityBase> getAll() {
+    public List<Book> list() {
         return Book.listAll();
+    }
+
+    @GET
+    @Path("/{id}")
+    public Book get(@PathParam("id") Long id) {
+        return Book.findById(id);
     }
 
     @POST
