@@ -11,16 +11,19 @@ import java.util.List;
 public class EditorGraphQL {
 
     @Query
+    @Description("Get all editors")
     public List<Editor> allEditors() {
         return Editor.listAll();
     }
 
     @Query
-    public Editor getEditor(Long id) {
+    @Description("Get an editor by id")
+    public Editor getEditor(@Name("editorId") Long id) {
         return Editor.findById(id);
     }
 
     @Mutation
+    @Description("Create a new editor")
     @Transactional
     public Editor createEditor(Editor editor) {
         editor.persist();
@@ -28,8 +31,9 @@ public class EditorGraphQL {
     }
 
     @Mutation
+    @Description("Delete an editor by id")
     @Transactional
-    public Editor updateEditor(Long id, Editor editorData) {
+    public Editor updateEditor(@Name("editorId") Long id, Editor editorData) {
         Editor editor = getEditor(id);
         if (editor == null) {
             throw new NotFoundException("Editor not found");

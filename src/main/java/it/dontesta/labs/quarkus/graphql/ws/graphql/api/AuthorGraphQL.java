@@ -11,16 +11,19 @@ import java.util.List;
 public class AuthorGraphQL {
 
     @Query
+    @Description("Get all authors")
     public List<Author> allAuthors() {
         return Author.listAll();
     }
 
     @Query
-    public Author getAuthor(Long id) {
+    @Description("Get an author by id")
+    public Author getAuthor(@Name("authorId") Long id) {
         return Author.findById(id);
     }
 
     @Mutation
+    @Description("Create a new author")
     @Transactional
     public Author createAuthor(Author author) {
         author.persist();
@@ -28,8 +31,9 @@ public class AuthorGraphQL {
     }
 
     @Mutation
+    @Description("Delete an author by id")
     @Transactional
-    public Author updateAuthor(Long id, Author authorData) {
+    public Author updateAuthor(@Name("authorId") Long id, Author authorData) {
         Author author = getAuthor(id);
         if (author == null) {
             throw new NotFoundException("Author not found");
