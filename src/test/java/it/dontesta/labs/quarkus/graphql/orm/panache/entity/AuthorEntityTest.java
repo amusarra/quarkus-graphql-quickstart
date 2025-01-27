@@ -17,6 +17,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -105,6 +106,6 @@ class AuthorEntityTest {
         em.flush();
 
         Author deletedAuthor = em.find(Author.class, author.id);
-        assertEquals(null, deletedAuthor);
+      assertNull(deletedAuthor);
     }
 }

@@ -17,6 +17,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -99,6 +100,6 @@ class EditorEntityTest {
         em.flush();
 
         Editor deletedEditor = em.find(Editor.class, editor.id);
-        assertEquals(null, deletedEditor);
+        assertNull(deletedEditor);
     }
 }

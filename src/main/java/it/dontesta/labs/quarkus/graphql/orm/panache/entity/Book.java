@@ -22,7 +22,7 @@ public class Book extends PanacheEntity {
     @Column(length = 60, nullable = false)
     public String title;
 
-    @Column(name = "sub_title", length = 60, nullable = true)
+    @Column(name = "sub_title", length = 60)
     public String subTitle;
 
     @Column(length = 13, nullable = false)
@@ -31,7 +31,7 @@ public class Book extends PanacheEntity {
     @Column(length = 4, nullable = false)
     public Integer pages;
 
-    @Column(length = 255, nullable = false)
+    @Column(nullable = false)
     public String summary;
 
     @Column(name = "publication_date", nullable = false)
@@ -40,10 +40,10 @@ public class Book extends PanacheEntity {
     @Column(length = 20, nullable = false)
     public String genre;
 
-    @Column(length = 512, nullable = true)
+    @Column(length = 512)
     public String frontCorverImageUrl;
 
-    @Column(length = 512, nullable = true)
+    @Column(length = 512)
     public String backCorverImageUrl;
 
     @ElementCollection
@@ -58,7 +58,7 @@ public class Book extends PanacheEntity {
 
     @ElementCollection
     @CollectionTable(name = "book_keywords")
-    @Column(name = "keyword", length = 255, nullable = false)
+    @Column(name = "keyword", nullable = false)
     public List<String> keywords;
 
     @ManyToMany(cascade = CascadeType.PERSIST)

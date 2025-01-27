@@ -47,10 +47,8 @@ class BookResourceIntegrationTest {
                 .body(book)
                 .when().post("/api/books")
                 .then()
-                .statusCode(200)
-                .body("id", notNullValue())
-                .body("title", is("New Book"))
-                .body("editor.name", is("Editor"));
+                .statusCode(201)
+                .header("Location", is(notNullValue()));
     }
 
     // Add more tests here

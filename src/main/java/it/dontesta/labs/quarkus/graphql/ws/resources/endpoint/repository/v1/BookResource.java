@@ -4,7 +4,6 @@
  */
 package it.dontesta.labs.quarkus.graphql.ws.resources.endpoint.repository.v1;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Author;
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Book;
 import jakarta.transaction.Transactional;

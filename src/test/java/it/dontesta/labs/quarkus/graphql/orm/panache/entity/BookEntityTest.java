@@ -59,15 +59,15 @@ class BookEntityTest {
         assertEquals(LocalDate.now(), persistedBook.publication);
         assertEquals("Test Genre", persistedBook.genre);
         assertEquals(1, persistedBook.languages.size());
-        assertEquals("ENG", persistedBook.languages.get(0));
+        assertEquals("ENG", persistedBook.languages.getFirst());
         assertEquals(1, persistedBook.formats.size());
-        assertEquals("PDF", persistedBook.formats.get(0));
+        assertEquals("PDF", persistedBook.formats.getFirst());
         assertEquals(2, persistedBook.keywords.size());
         assertEquals("test", persistedBook.keywords.get(0));
         assertEquals("book", persistedBook.keywords.get(1));
         assertNotNull(persistedBook.editor);
         assertEquals("Test Editor", persistedBook.editor.name);
         assertEquals(1, persistedBook.authors.size());
-        assertEquals("Test Author", persistedBook.authors.get(0).firstName);
+        assertEquals("Test Author", persistedBook.authors.getFirst().firstName);
     }
 }
