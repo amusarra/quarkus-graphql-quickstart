@@ -192,3 +192,8 @@ INSERT INTO book_authors (book_id, author_id) VALUES (14, 8);
 INSERT INTO book_authors (book_id, author_id) VALUES (14, 11);
 INSERT INTO book_authors (book_id, author_id) VALUES (15, 9);
 INSERT INTO book_authors (book_id, author_id) VALUES (15, 10);
+
+-- Alter sequence
+ALTER SEQUENCE AUTHOR_SEQ RESTART WITH 50;
+ALTER SEQUENCE BOOK_SEQ RESTART WITH 50;
+ALTER SEQUENCE EDITOR_SEQ RESTART WITH 50;

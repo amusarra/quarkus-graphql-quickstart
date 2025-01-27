@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>it.dontesta.labs.quarkus.graphql</groupId>
     <artifactId>quarkus-graphql-quickstart</artifactId>
@@ -79,12 +78,21 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-openapi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5-mockito</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -137,8 +145,7 @@
                 </executions>
                 <configuration>
                     <systemPropertyVariables>
-                        <native.image.path>${project.build.directory}/${project.build.finalName}-runner
-                        </native.image.path>
+                        <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
                     </systemPropertyVariables>
@@ -173,9 +180,7 @@
                             <goal>generateKeyPair</goal>
                         </goals>
                         <configuration>
-                            <keystore>
-                                ${project.basedir}/src/main/resources/${quarkus.http.ssl.certificate.key-store-file}
-                            </keystore>
+                            <keystore>${project.basedir}/src/main/resources/${quarkus.http.ssl.certificate.key-store-file}</keystore>
                             <dname>cn=${project.artifactId}, ou=${project.groupId}, o=dontesta.it, c=IT</dname>
                             <keypass>${quarkus.http.ssl.certificate.key-store-password}</keypass>
                             <storepass>${quarkus.http.ssl.certificate.key-store-password}</storepass>

@@ -4,6 +4,17 @@
  */
 package it.dontesta.labs.quarkus.graphql.s3.service;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
 import io.minio.BucketExistsArgs;
 import io.minio.GetObjectArgs;
 import io.minio.GetPresignedObjectUrlArgs;
@@ -14,35 +25,72 @@ import io.minio.StatObjectArgs;
 import io.minio.StatObjectResponse;
 import io.minio.UploadObjectArgs;
 import io.minio.http.Method;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
+import io.quarkus.logging.Log;
+import it.dontesta.labs.quarkus.graphql.exception.MinioServiceException;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 @ApplicationScoped
 public class MinioService {
 
+    private final MinioClient minioClient;
+
     @Inject
-    MinioClient minioClient;
-
-    public void uploadObject(String bucketName, String objectName, String filePath) throws Exception {
-        // Verifica se il bucket esiste, altrimenti lo crea
-        boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
-        if (!found) {
-            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
-        }
-
-        // Carica il file
-        minioClient.uploadObject(
-                UploadObjectArgs.builder()
-                        .bucket(bucketName)
-                        .object(objectName)
-                        .filename(filePath)
-                        .build());
+    public MinioService(MinioClient minioClient) {
+        this.minioClient = minioClient;
     }
 
-    public InputStream getObject(String bucketName, String objectName) {
+    /**
+     * Uploads an object to a specified bucket in MinIO.
+     *
+     * @param bucketName the name of the bucket
+     * @param objectName the name of the object
+     * @param filePath the {@link FileUpload} to the file to be uploaded
+     * @throws MinioServiceException if an error occurs during the upload
+     */
+    public void uploadObject(@NotEmpty @NotNull String bucketName,
+            @NotEmpty @NotNull String objectName,
+            @NotEmpty @NotNull String filePath) {
+
+        Log.debugf("Uploading object '%s' with filePath '%s' to bucket '%s'...", objectName, filePath, bucketName);
+
+        try {
+            // Check if the file exists and is not empty
+            long fileSize = Files.size(Paths.get(filePath));
+            if (fileSize == 0) {
+                throw new IllegalArgumentException("File is empty");
+            }
+
+            // Verify if the bucket exists, if not create it
+            boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+
+            if (!found) {
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+                Log.debugf("Created bucket '%s'", bucketName);
+            }
+
+            // Upload the object to MinIO
+            minioClient.uploadObject(
+                    UploadObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .filename(filePath)
+                            .build());
+            Log.debugf("Uploaded object '%s' to bucket '%s'", objectName, bucketName);
+        } catch (Exception e) {
+            Log.error(e.getMessage(), e);
+            throw new MinioServiceException("Failed to upload object to MinIO", e);
+        }
+    }
+
+    /**
+     * Retrieves an object from a specified bucket in MinIO.
+     *
+     * @param bucketName the name of the bucket
+     * @param objectName the name of the object
+     * @return an InputStream to read the object
+     * @throws MinioServiceException if an error occurs during the retrieval
+     */
+    public InputStream getObject(@NotEmpty @NotNull String bucketName, @NotEmpty @NotNull String objectName) {
         try {
             return minioClient.getObject(
                     GetObjectArgs.builder()
@@ -50,32 +98,72 @@ public class MinioService {
                             .object(objectName)
                             .build());
         } catch (Exception e) {
-            throw new RuntimeException("Failed to download file from MinIO", e);
+            throw new MinioServiceException("Failed to retrieve object details from MinIO", e);
         }
     }
 
-    public boolean bucketExists(String bucketName) throws Exception {
-        return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+    /**
+     * Checks if a bucket exists in MinIO.
+     *
+     * @param bucketName the name of the bucket
+     * @return true if the bucket exists, false otherwise
+     * @throws MinioServiceException if an error occurs during the check
+     */
+    public boolean bucketExists(@NotEmpty @NotNull String bucketName) {
+        try {
+            return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+        } catch (Exception e) {
+            throw new MinioServiceException("Failed to check bucket existence", e);
+        }
     }
 
-    public boolean makeBucket(String bucketName) throws Exception {
-        minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+    /**
+     * Creates a new bucket in MinIO.
+     *
+     * @param bucketName the name of the bucket
+     * @return true if the bucket was created successfully, false otherwise
+     * @throws MinioServiceException if an error occurs during the creation
+     */
+    public boolean makeBucket(@NotEmpty @NotNull String bucketName) {
+        try {
+            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
 
-        return bucketExists(bucketName);
+            return bucketExists(bucketName);
+        } catch (Exception e) {
+            throw new MinioServiceException("Failed to create bucket", e);
+        }
     }
 
-    public void removeObject(String bucketName, String objectName) throws Exception {
-        minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(objectName).build());
+    /**
+     * Removes an object from a specified bucket in MinIO.
+     *
+     * @param bucketName the name of the bucket
+     * @param objectName the name of the object
+     * @throws MinioServiceException if an error occurs during the removal
+     */
+    public void removeObject(@NotEmpty @NotNull String bucketName, @NotEmpty @NotNull String objectName) {
+        try {
+            minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(objectName).build());
+        } catch (Exception e) {
+            throw new MinioServiceException("Failed to remove object from MinIO", e);
+        }
     }
 
-    public Map<String, Object> getObjectDetails(String bucketName, String objectName) {
+    /**
+     * Retrieves the details of an object from a specified bucket in MinIO.
+     *
+     * @param bucketName the name of the bucket
+     * @param objectName the name of the object
+     * @return a map containing the details of the object
+     * @throws MinioServiceException if an error occurs during the retrieval
+     */
+    public Map<String, Object> getObjectDetails(@NotEmpty @NotNull String bucketName, @NotEmpty @NotNull String objectName) {
         Map<String, Object> objectDetails = new HashMap<>();
 
         try {
-            // Ottieni i metadati dell'oggetto
+            // Obtain the object details from MinIO
             StatObjectResponse stat = minioClient.statObject(
-                StatObjectArgs.builder().bucket(bucketName).object(objectName).build()
-            );
+                    StatObjectArgs.builder().bucket(bucketName).object(objectName).build());
             // Aggiungi i dettagli dell'oggetto alla mappa
             objectDetails.put("bucketName", bucketName);
             objectDetails.put("objectName", objectName);
@@ -84,22 +172,20 @@ public class MinioService {
             objectDetails.put("lastModified", stat.lastModified());
             objectDetails.put("etag", stat.etag());
 
-            // Genera un URL pre-signed per il download
+            // Build the presigned URL for the object
             String presignedUrl = minioClient.getPresignedObjectUrl(
-                GetPresignedObjectUrlArgs.builder()
-                    .method(Method.GET)
-                    .bucket(bucketName)
-                    .object(objectName)
-                    .build()
-            );
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .build());
 
             objectDetails.put("downloadUrl", presignedUrl);
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to retrieve object details from MinIO", e);
+            throw new MinioServiceException("Failed to retrieve object details from MinIO", e);
         }
 
         return objectDetails;
     }
-
 }

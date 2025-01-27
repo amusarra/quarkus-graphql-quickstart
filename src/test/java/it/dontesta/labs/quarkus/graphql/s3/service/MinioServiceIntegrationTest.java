@@ -6,6 +6,9 @@ package it.dontesta.labs.quarkus.graphql.s3.service;
 
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
@@ -13,30 +16,41 @@ import java.io.InputStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
-public class MinioServiceIntegrationTest {
+class MinioServiceIntegrationTest {
 
     @Inject
     MinioService minioService;
 
     @Test
-    void uploadAndGetObject() throws Exception {
+    void uploadAndGetObject() {
         String bucketName = "integration-test-bucket";
         String objectName = "integration-test-object";
-        String filePath = "/tmp/test.md";
 
-        // Upload file
-        minioService.uploadObject(bucketName, objectName, filePath);
+        try {
+            // Crea un file temporaneo
+            File tempFile = File.createTempFile("tempFile", ".txt");
 
-        // Verify file upload
-        InputStream object = minioService.getObject(bucketName, objectName);
-        assertNotNull(object);
+            // Scrivi del testo nel file temporaneo
+            FileWriter writer = new FileWriter(tempFile);
+            writer.write("This is a test file for MinIO integration test");
+            writer.close();
 
-        // Clean up
-        minioService.removeObject(bucketName, objectName);
+            // Upload file
+            minioService.uploadObject(bucketName, objectName, tempFile.getAbsolutePath());
+
+            // Verify file upload
+            InputStream object = minioService.getObject(bucketName, objectName);
+            assertNotNull(object);
+
+            // Clean up
+            minioService.removeObject(bucketName, objectName);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
-    void bucketExistsIntegration() throws Exception {
+    void bucketExistsIntegration() {
         String bucketName = "integration-test-bucket";
 
         // Verify bucket existence
