@@ -10,7 +10,6 @@ import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Editor;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.NotFoundException;
 import java.util.ArrayList;
 import org.eclipse.microprofile.graphql.*;
 
@@ -50,10 +49,11 @@ public class BookGraphQL {
     @Mutation
     @Description("Delete a book by id")
     @Transactional
-    public Book addAuthorsToBook(@Name("bookId") Long bookId, List<Long> authorIds) {
+    public Book addAuthorsToBook(@Name("bookId") Long bookId, List<Long> authorIds)
+        throws GraphQLException {
         Book book = getBook(bookId);
         if (book == null) {
-            throw new NotFoundException("Book not found");
+            throw new GraphQLException("Book not found with Id %d".formatted(bookId));
         }
         List<Author> authors = Author.list("id in ?1", authorIds);
         book.authors.addAll(authors);

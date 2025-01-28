@@ -26,6 +26,9 @@ public class EditorGraphQL {
     @Description("Create a new editor")
     @Transactional
     public Editor createEditor(Editor editor) {
+        // The editor is persisted automatically by Panache
+        // because it is a Panache entity.
+        // Extend this method to handle the detached entity as needed.
         editor.persist();
         return editor;
     }

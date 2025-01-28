@@ -40,6 +40,9 @@ public class BookResource {
     @POST
     @Transactional
     public Response create(Book book) {
+        // The book is persisted automatically by Panache
+        // because it is a Panache entity.
+        // Extend this method to handle the detached entity as needed.
         book.persist();
         return Response.created(URI.create("/books/" + book.id)).build();
     }
@@ -48,10 +51,17 @@ public class BookResource {
     @Path("{id}")
     @Transactional
     public Book update(@PathParam("id") Long id, Book book) {
+        // The book is persisted automatically by Panache
+        // because it is a Panache entity.
+        // Extend this method to handle the detached entity as needed.
+
         Book entity = Book.findById(id);
         if (entity == null) {
             throw new NotFoundException();
         }
+
+        // Update the entity with the new values
+        // Extend this method to handle the updated entity as needed.
         entity.title = book.title;
         entity.editor = book.editor;
         entity.authors = book.authors;
