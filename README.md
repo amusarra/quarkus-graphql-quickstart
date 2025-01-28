@@ -1,4 +1,4 @@
-# Quarkus GraphQL Quickstart con Supporto MinIO per lo Storage degli Oggetti
+# Quarkus GraphQL Quickstart + MinIO come Object Store S3
 
 Questo progetto è una dimostrazione di un’applicazione Quarkus che espone dati attraverso una API RESTful (`quarkus-rest`) 
 tradizionale e una API GraphQL (`quarkus-smallrye-graphql`). Il progetto utilizza Hibernate ORM con Panache 
