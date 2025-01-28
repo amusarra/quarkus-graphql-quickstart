@@ -1,0 +1,57 @@
+# CI Docker build with maven build
+name: CI Docker build
+
+on:
+  # Trigger analysis when pushing in master or pull requests, and when creating
+  # a pull request.
+  push:
+    branches:
+      - develop
+      - main
+  release:
+    types: [ published ]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+        with:
+          # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
+      - name: Get repo name
+        run: echo "REPO_NAME=$(echo ${{ github.repository }} | cut -d '/' -f 2)" >> $GITHUB_ENV
+      - name: Echo ref name trigger
+        run: echo ${{ github.ref_name }}
+      - name: Set up JDK 21
+        uses: actions/setup-java@main
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+          cache: 'maven'
+      - name: Cache Maven packages
+        uses: actions/cache@main
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
+        run: mvn -B clean package
+        # using action https://github.com/marketplace/actions/build-and-push-docker-images
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@master
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@master
+      - name: Login to Docker Hub
+        uses: docker/login-action@master
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@master
+        with:
+          context: .
+          file: src/main/docker/Dockerfile.jvm
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }}:${{ github.ref_name }},${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }}:latest
