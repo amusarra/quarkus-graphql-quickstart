@@ -6,14 +6,21 @@ package it.dontesta.labs.quarkus.graphql.ws.graphql.api;
 
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Author;
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Book;
+import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Editor;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
+import java.util.ArrayList;
 import org.eclipse.microprofile.graphql.*;
 
 import java.util.List;
 
 @GraphQLApi
 public class BookGraphQL {
+
+    @Inject
+    EntityManager entityManager;
 
     @Query
     @Description("Get all books")
@@ -30,8 +37,13 @@ public class BookGraphQL {
     @Mutation
     @Description("Create a new book")
     @Transactional
-    public Book createBook(Book book) {
-        book.persist();
+    public Book createBook(Book book) throws GraphQLException {
+        handleEditor(book);
+        handleAuthors(book);
+
+        entityManager.persist(book);
+        entityManager.flush();
+
         return book;
     }
 
@@ -46,5 +58,33 @@ public class BookGraphQL {
         List<Author> authors = Author.list("id in ?1", authorIds);
         book.authors.addAll(authors);
         return book;
+    }
+
+    private void handleEditor(Book book) throws GraphQLException {
+        if (book.editor != null && book.editor.id != null) {
+            Editor foundEditor = Editor.findById(book.editor.id);
+            if (foundEditor == null) {
+                throw new GraphQLException("Editor not found with Id %d".formatted(book.editor.id));
+            }
+            book.editor = foundEditor;
+        }
+    }
+
+    private void handleAuthors(Book book) throws GraphQLException {
+        if (book.authors != null) {
+            List<Author> updatedAuthors = new ArrayList<>();
+            for (Author author : book.authors) {
+                if (author.id != null) {
+                    Author foundAuthor = Author.findById(author.id);
+                    if (foundAuthor == null) {
+                        throw new GraphQLException("Author not found with Id %d".formatted(author.id));
+                    }
+                    updatedAuthors.add(foundAuthor);
+                }
+            }
+            if (!updatedAuthors.isEmpty()) {
+                book.authors = updatedAuthors;
+            }
+        }
     }
 }
