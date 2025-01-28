@@ -4,9 +4,12 @@
  */
 package it.dontesta.labs.quarkus.graphql.s3.service;
 
+import io.minio.PutObjectArgs;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +32,9 @@ import io.quarkus.logging.Log;
 import it.dontesta.labs.quarkus.graphql.exception.MinioServiceException;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
+/**
+ * Service class for interacting with MinIO for file storage operations.
+ */
 @ApplicationScoped
 public class MinioService {
 
@@ -83,6 +89,45 @@ public class MinioService {
     }
 
     /**
+     * Overloaded method to upload an object to a specified bucket in MinIO using a byte array.
+     *
+     * @param bucketName the name of the bucket
+     * @param objectName the name of the object
+     * @param fileContent the byte array content of the file to be uploaded
+     * @throws MinioServiceException if an error occurs during the upload
+     */
+    public void uploadObject(@NotEmpty @NotNull String bucketName,
+            @NotEmpty @NotNull String objectName,
+            @NotEmpty @NotNull byte[] fileContent) {
+
+        Log.debugf("Uploading object '%s' with byte array content to bucket '%s'...", objectName, bucketName);
+
+        try {
+            // Verify if the bucket exists, if not create it
+            boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+
+            if (!found) {
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+                Log.debugf("Created bucket '%s'", bucketName);
+            }
+
+            // Upload the object to MinIO
+            try (InputStream inputStream = new ByteArrayInputStream(fileContent)) {
+                minioClient.putObject(
+                        PutObjectArgs.builder()
+                                .bucket(bucketName)
+                                .object(objectName)
+                                .stream(inputStream, fileContent.length, -1)
+                                .build());
+            }
+            Log.debugf("Uploaded object '%s' to bucket '%s'", objectName, bucketName);
+        } catch (Exception e) {
+            Log.error(e.getMessage(), e);
+            throw new MinioServiceException("Failed to upload object to MinIO", e);
+        }
+    }
+
+    /**
      * Retrieves an object from a specified bucket in MinIO.
      *
      * @param bucketName the name of the bucket
@@ -99,6 +144,29 @@ public class MinioService {
                             .build());
         } catch (Exception e) {
             throw new MinioServiceException("Failed to retrieve object details from MinIO", e);
+        }
+    }
+
+    /**
+     * Retrieves an object from a specified bucket in MinIO and returns it as a Base64 encoded string.
+     *
+     * @param bucketName the name of the bucket
+     * @param objectName the name of the object
+     * @return a Base64 encoded string of the object content
+     * @throws MinioServiceException if an error occurs during the retrieval
+     */
+    public String getObjectAsBase64(@NotEmpty @NotNull String bucketName, @NotEmpty @NotNull String objectName) {
+        try (InputStream inputStream = minioClient.getObject(
+            GetObjectArgs.builder()
+                .bucket(bucketName)
+                .object(objectName)
+                .build())) {
+
+            byte[] bytes = inputStream.readAllBytes();
+            return Base64.getEncoder().encodeToString(bytes);
+
+        } catch (Exception e) {
+            throw new MinioServiceException("Failed to retrieve object from MinIO", e);
         }
     }
 
