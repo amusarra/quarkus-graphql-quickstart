@@ -1,5 +1,12 @@
 # Quarkus GraphQL Quickstart + MinIO come Object Store S3
 
+[![Keep a Changelog v1.1.0 badge](https://img.shields.io/badge/changelog-Keep%20a%20Changelog%20v1.1.0-%23E05735)](CHANGELOG.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![code of conduct](https://img.shields.io/badge/Conduct-Contributor%20Covenant%202.1-purple.svg)](CODE_OF_CONDUCT.md)
+![Build with Maven](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/build_via_maven.yml/badge.svg)
+![CI Docker build](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish.yml/badge.svg)
+![CI Docker build native amd64](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish_native_amd64.yml/badge.svg)
+
 Questo progetto è una dimostrazione di un’applicazione Quarkus che espone dati attraverso una API RESTful (`quarkus-rest`) 
 tradizionale e una API GraphQL (`quarkus-smallrye-graphql`). Il progetto utilizza Hibernate ORM con Panache 
 (`quarkus-hibernate-orm-panache`) per la persistenza dei dati e include configurazioni per database H2 (per sviluppo), 
@@ -8,7 +15,43 @@ PostgreSQL (per profili di produzione) e MinIO come Object Store S3 (`io.quarkiv
 MinIO è un server di storage degli oggetti ad alte prestazioni, distribuito e compatibile con Amazon S3 facilmente
 integrabile con Quarkus per via dell'estensione `quarkus-minio` e dei DevService.
 
-Il progetto segue la classica architettura a tre strati:
+GraphQL è un linguaggio di query per API che consente ai client di richiedere esattamente i dati necessari, evitando 
+over-fetching o under-fetching. A differenza delle API REST, offre un singolo endpoint attraverso il quale il client 
+può ottenere dati strutturati in base alle proprie esigenze.
+
+Vantaggi principali rispetto alle API custom:
+1.	Flessibilità: Il client decide quali dati ottenere, riducendo payload inutili.
+2.	Performance: Minore numero di chiamate, grazie all’aggregazione di dati da più fonti in una singola query.
+3.	Evolvibilità: Cambiamenti al backend possono essere introdotti senza rompere le query esistenti.
+4.	Standardizzazione: L’uso di GraphQL riduce la necessità di progettare API ad hoc, semplificando sviluppo e manutenzione.
+
+Questo approccio migliora la user experience e accelera lo sviluppo di applicazioni client e server.
+
+| **Pro**                                                                            | **Contro**                                                                                |
+|------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| **Richieste personalizzate**: i client ottengono solo i dati di cui hanno bisogno. | **Complessità iniziale**: richiede una curva di apprendimento maggiore rispetto a REST.   |
+| **Single Endpoint**: un unico punto di accesso per tutte le query e mutazioni.     | **Caching più complesso**: meno intuitivo rispetto a REST (che sfrutta URL univoci).      |
+| **Aggregazione dei dati**: consente di unire dati da più fonti in una chiamata.    | **Overhead server**: query complesse possono sovraccaricare il server se non ben gestite. |
+| **Evolvibilità**: i campi possono essere deprecati senza interrompere il client.   | **Strumenti di debugging**: meno diffusi rispetto a quelli per REST.                      |
+| **Documentazione integrata**: lo schema funge da documentazione per le API.        | **Autorizzazioni complesse**: gestione dei permessi più articolata per query dinamiche.   |
+| **Riduzione delle chiamate**: ottimizza le comunicazioni client-server.            | **Setup iniziale**: richiede più configurazione e strumenti rispetto a REST.              |
+
+> **Nota**: Questo progetto ha un approccio educativo e dimostrativo. Volutamente ci sono parti di codice non complete
+>ma con commenti per guidare l'utente a completare l'implementazione. Per esempio
+> ```java
+>    @Mutation
+>    @Description("Create a new author")
+>    @Transactional
+>    public Author createAuthor(Author author) {
+>        // The author is persisted automatically by Panache
+>        // because it is a Panache entity.
+>        // Extend this method to handle the detached entity as needed.
+>        author.persist();
+>        return author;
+>    }
+>```
+
+Il progetto segue la classica architettura a tre strati.
 
 * Strato di Persistenza (ORM/Panache): utilizza Hibernate ORM con Panache per la gestione e la persistenza 
    dei dati nel database.
@@ -47,13 +90,13 @@ Tabelle 1 - Endpoint principali dell'applicazione Quarkus GraphQL
 
 ## Requisiti
 
-Per eseguire o sviluppare il progetto, assicurati di avere installati i seguenti strumenti:
+Per eseguire o sviluppare il progetto, assicurati di avere installati i seguenti strumenti.
 
 * Git 2.33+
 * JDK 21+, GraalVM 21+ (per la build nativa)
 * tool per i container come Docker o Podman
 * Apache Maven 3.9.9 (opzionale nel caso di uso del wrapper Maven integrato con il progetto di esempio);
-* Quarkus CLI 3.17 (opzionale, ma consigliato);
+* Quarkus CLI 3.17 (opzionale, ma consigliato)
 
 ## Quickstart
 
@@ -80,8 +123,12 @@ Per avviare l'applicazione in modalità sviluppo, esegui il comando:
 ./mvnw quarkus:dev
 
 # Tramite il comando Quarkus CLI
+# Il comando è disponibile solo se hai installato il Quarkus CLI.
 quarkus dev
 ```
+
+> **Nota**: Prima di avviare l'applicazione in modalità nativa, assicurati di aver installato e configurato correttamente
+> Docker o Podman sul tuo sistema.
 
 Per testare le API GraphQL e REST, apri il browser e visita i seguenti URL:
 
@@ -236,62 +283,73 @@ Tramite la Swagger UI, puoi eseguire richieste REST per recuperare, creare, aggi
 
 ![OpenAPI SwaggerUI per eseguire richieste REST](src/main/docs/resources/images/openapi-ui.jpg)
 
+## Configurazione dell'applicazione
+I punti salienti della configurazione dell'applicazione riguardano:
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+1. abilitazione e configurazione protocollo https
+2. configurazione end-point GraphQL
+3. configurazione database (H2 profilo dev e PostgreSQL profilo prod)
+4. configurazione ORM
+5. configurazione MinIO
+6. configurazione estensione OpenShift
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+Per agire sulla configurazione agire sul file 'src/main/resources/application.properties'
 
-## Running the application in dev mode
+## Creazione dell'artefatto ed eseguire l’applicazione
 
-You can run your application in dev mode that enables live coding using:
+L’applicazione può essere impacchettata utilizzando il comando:
 
-```shell script
-./mvnw quarkus:dev
-```
-
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
-
-## Packaging and running the application
-
-The application can be packaged using:
-
-```shell script
+```bash
 ./mvnw package
 ```
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+Questo comando genera il file `quarkus-run.jar` nella directory `target/quarkus-app/`.
+Tieni presente che non si tratta di un über-jar, poiché le dipendenze vengono copiate nella directory 
+`target/quarkus-app/lib/`.
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+L’applicazione può ora essere eseguita utilizzando il comando:
 
-If you want to build an _über-jar_, execute the following command:
+```bash
+java -jar target/quarkus-app/quarkus-run.jar.
+```
 
-```shell script
+Se desideri creare un über-jar, esegui il seguente comando:
+
+```bash
 ./mvnw package -Dquarkus.package.jar.type=uber-jar
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+L’applicazione, impacchettata come über-jar, può essere eseguita con:
 
-## Creating a native executable
+```bash
+java -jar target/*-runner.jar.
+```
 
-You can create a native executable using:
+## Creare un eseguibile nativo
 
-```shell script
+Puoi creare un eseguibile nativo utilizzando il comando:
+
+```bash
 ./mvnw package -Dnative
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+Oppure, se non hai installato GraalVM, puoi creare l’eseguibile nativo utilizzando un container con il comando:
 
-```shell script
+```bash
 ./mvnw package -Dnative -Dquarkus.native.container-build=true
 ```
 
-You can then execute your native executable with: `./target/quarkus-graphql-quickstart-1.0.0-SNAPSHOT-runner`
+Dopo la creazione, puoi eseguire il tuo eseguibile nativo con:
 
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
+```bash
+./target/quarkus-graphql-quickstart-1.0.0-SNAPSHOT-runner
+```
 
-## Related Guides
+Per maggiori informazioni sulla creazione di eseguibili nativi, consulta la guida ufficiale: https://quarkus.io/guides/maven-tooling.
 
+## Guida ai servizi e alle estensioni utilizzate
+
+- ArC ([guide](https://quarkus.io/guides/cdi-reference)): Build time CDI dependency injection
 - JDBC Driver - PostgreSQL ([guide](https://quarkus.io/guides/datasource)): Connect to the PostgreSQL database via JDBC
 - SmallRye Health ([guide](https://quarkus.io/guides/smallrye-health)): Monitor service health
 - Hibernate ORM with Panache ([guide](https://quarkus.io/guides/hibernate-orm-panache)): Simplify your persistence code for Hibernate ORM via the active record or the repository pattern
@@ -299,3 +357,14 @@ If you want to learn more about building native executables, please consult <htt
 - REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
 - REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
 - Hibernate Validator ([guide](https://quarkus.io/guides/validation)): Validate object properties (field, getter) and method parameters for your beans (REST, CDI, Jakarta Persistence)
+- GraphQL ([guide](https://quarkus.io/guides/smallrye-graphql)): Expose your services as a GraphQL endpoint
+- MinIO ([guide](https://quarkus.io/extensions/io.quarkiverse.minio/quarkus-minio/)): Use MinIO as an Object Store S3
+- OpenShift ([guide](https://quarkus.io/guides/deploying-to-openshift)): Generate OpenShift resources from annotations
+- Using Podman with Quarkus ([guide](https://quarkus.io/guides/podman))
+## Team Tools
+
+[![alt tag](http://pylonsproject.org/img/logo-jetbrains.png)](https://www.jetbrains.com/?from=LiferayPortalSecurityAudit)
+
+Antonio Musarra's Blog Team would like inform that JetBrains is helping by
+provided IDE to develop the application. Thanks to its support program for
+an Open Source projects!
