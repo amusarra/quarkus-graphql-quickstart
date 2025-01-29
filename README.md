@@ -70,6 +70,7 @@ Figura 1 - Stratificazione dell'applicazione Quarkus GraphQL
 * Implementazione di un'API GraphQL con Quarkus.
 * Utilizzo di Panache per la persistenza dei dati con Hibernate ORM.
 * Schema GraphQL definito con tipi, query e mutation.
+* Integrazione della paginazione con GraphQL.
 * Esempi di query per recuperare libri e autori.
 * Esempi di mutation per creare, aggiornare ed eliminare libri e autori.
 * Storage delle copertine dei libri su MinIO, sia in sviluppo (con Dev Services) che in produzione
@@ -121,14 +122,26 @@ Per avviare l'applicazione in modalità sviluppo, esegui il comando:
 # Avvia l'applicazione in modalità sviluppo
 # Tramite il wrapper Maven integrato
 ./mvnw quarkus:dev
+```
 
+```shell
 # Tramite il comando Quarkus CLI
 # Il comando è disponibile solo se hai installato il Quarkus CLI.
 quarkus dev
 ```
 
 > **Nota**: Prima di avviare l'applicazione in modalità nativa, assicurati di aver installato e configurato correttamente
-> Docker o Podman sul tuo sistema.
+> Docker o Podman sul tuo sistema. Nel caso di errata configurazione o mancanza di Docker o Podman, l'applicazione
+> non verrà avviata correttamente e potresti riscontrare errori come quelli riportati di seguito:
+> 
+> ```shell
+> 2025-01-29 09:33:31,911 WARN  [org.tes.doc.DockerClientProviderStrategy] (build-26) DOCKER_HOST unix:///var/run/docker.sock is not listening: java.io.IOException: com.sun.jna.LastErrorException: [61] Connection refused
+> 2025-01-29 09:33:31,929 ERROR [org.tes.doc.DockerClientProviderStrategy] (build-26) Could not find a valid Docker environment. Please check configuration. Attempted configurations were:
+>	DockerDesktopClientProviderStrategy: failed with exception NullPointerException (Cannot invoke "java.nio.file.Path.toString()" because the return value of "org.testcontainers.dockerclient.DockerDesktopClientProviderStrategy.getSocketPath()" is null)As no valid configuration was found, execution cannot continue.
+> See https://java.testcontainers.org/on_failure.html for more details.
+> 2025-01-29 09:33:31,969 WARN  [io.qua.dep.uti.ContainerRuntimeUtil] (build-26) Command "docker info" exited with error code 1. Rootless container runtime detection might not be reliable or the container service is not running at all.
+> 2025-01-29 09:33:31,971 INFO  [org.tes.DockerClientFactory] (build-26) Testcontainers version: 1.20.4 
+> ```
 
 Per testare le API GraphQL e REST, apri il browser e visita i seguenti URL:
 
@@ -279,7 +292,128 @@ query getFile {
 }
 ```
 
-Tramite la Swagger UI, puoi eseguire richieste REST per recuperare, creare, aggiornare ed eliminare libri e autori oltre che caricare e scaricare file su MinIO.
+È possibile eseguire il test delle query e mutation GraphQL anche tramite cURL, Postman o qualsiasi altro client HTTP.
+A seguire un esempio di query GraphQL per recuperare tutti i libri:
+
+```shell
+curl -k -X POST http://localhost:8080/api/graphql \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "query { allBooks {
+          title
+          isbn
+          publication
+          genre
+          pages
+          summary
+          languages
+          formats
+          authors {
+            firstName
+            lastName
+          }
+          editor {
+            name
+          }
+        }
+      }"
+  }'
+```
+
+Qui è invece mostrato un esempio di mutation GraphQL per creare un libro:
+
+```shell
+curl -X POST http://localhost:8080/api/graphql \
+     -H "Content-Type: application/json" \
+     -d '{
+       "query": "
+         mutation createBook {
+           createBook(
+             book: {
+               title: \"Libro da author e editor esistenti\",
+               subTitle: \"Creato con Quarkus + GraphQL\",
+               isbn: \"7650986575646\",
+               pages: 567,
+               summary: \"Summary of the book\",
+               publication: \"2025-01-28\",
+               genre: \"fantasy\",
+               languages: [\"IT\"],
+               formats: [\"EPUB\", \"PDF\"],
+               keywords: [\"key1\"],
+               authors: [{ id: 5 }],
+               editor: { id: 5 }
+             }
+           ) {
+             id
+             title
+           }
+         }
+       "
+     }'
+```
+
+L'output della mutation sarà simile a quello riportato di seguito:
+
+```json
+{
+   "data": {
+      "createBook": {
+         "id": 54,
+         "title": "Libro da author e editor esistenti"
+      }
+   }
+}
+```
+
+Volendo eseguire una query per recuperare un libro specifico, puoi utilizzare il seguente comando cURL:
+
+```shell
+curl -X POST "http://localhost:8080/api/graphql" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "query": "query getBook {
+                   book(bookId: 54) {
+                     id
+                     title
+                     subTitle
+                     authors {
+                       firstName
+                       lastName
+                     }
+                     editor {
+                       name
+                     }
+                   }
+                 }"
+     }'
+```
+
+L'output della query sarà simile a quello riportato di seguito:
+
+```json
+{
+   "data": {
+      "book": {
+         "id": 54,
+         "title": "Libro da author e editor esistenti",
+         "subTitle": "Creato con Quarkus + GraphQL",
+         "authors": [
+            {
+               "firstName": "David",
+               "lastName": "Jones"
+            }
+         ],
+         "editor": {
+            "name": "Future Books Inc."
+         }
+      }
+   }
+}
+```
+
+Tramite la Swagger UI, puoi eseguire richieste REST per recuperare, creare, aggiornare ed eliminare libri e autori oltre 
+che caricare e scaricare file su MinIO. Dalla Swagger UI puoi anche vedere lo schema OpenAPI in formato JSON e YAML e 
+le eventuali chiamate che puoi eseguire tramite cURL.
 
 ![OpenAPI SwaggerUI per eseguire richieste REST](src/main/docs/resources/images/openapi-ui.jpg)
 
@@ -293,7 +427,374 @@ I punti salienti della configurazione dell'applicazione riguardano:
 5. configurazione MinIO
 6. configurazione estensione OpenShift
 
-Per agire sulla configurazione agire sul file 'src/main/resources/application.properties'
+Per applicare modifiche all'attuale configurazione dell'applicazione, agire sul file 
+'src/main/resources/application.properties'
+
+## Implementazione del supporto alla paginazione
+Quando si lavora con grandi dataset, la paginazione è fondamentale per ottimizzare le performance e migliorare 
+l’esperienza utente. Con GraphQL, possiamo implementare facilmente la paginazione, utilizzando sia il modello cursor-based che l’approccio tradizionale offset-based.
+
+Questa tabella comparativa ti aiuterà a visualizzare rapidamente le differenze tra paginazione con cursori e 
+paginazione con offset.
+
+| **Caratteristica**             | **Cursor-Based Pagination**        | **Offset-Based Pagination**        |
+|---------------------------------|------------------------------------|------------------------------------|
+| **Principio**                   | Navigazione basata su cursori univoci | Navigazione basata su LIMIT e OFFSET |
+| **Uso principale**              | Dataset in evoluzione o scorrimento infinito | Pagine fisse, dataset stabili |
+| **Prestazioni**                 | Più efficiente su grandi dataset e operazioni di ricerca | Buona per dataset piccoli e medi |
+| **Gestione delle modifiche ai dati** | Non influenzato da modifiche durante la navigazione | I dati potrebbero cambiare tra le pagine (inserimenti/rimozioni) |
+| **Facilità di implementazione** | Richiede gestione dei cursori | Semplice da implementare, simile a SQL |
+| **Esempio di query**            | `find().range(start, end)` con cursori Base64 | `find().range(offset, limit)` (LIMIT e OFFSET SQL) |
+
+Tabella 2 - Confronto tra Cursor-Based e Offset-Based Pagination
+
+Dettagliando la tabella precedentemente mostrata, possiamo evidenziare i seguenti punti:
+
+**Cursor-Based Pagination (Basata su Cursori)**
+* Principio: Ogni elemento ha un identificatore unico (cursor) che viene utilizzato per navigare tra le pagine.
+* Vantaggi:
+  * Ottimale per dataset in continuo cambiamento (nessuna distorsione dovuta a modifiche tra le richieste).
+  * Più efficiente nelle applicazioni con scorrimento infinito.
+  * Ideale per evitare problemi con le lacune nelle pagine.
+
+**Offset-Based Pagination (Basata su Offset)**
+* Principio: La paginazione è gestita tramite LIMIT e OFFSET, simile alle query SQL, dove puoi definire quale pagina e quanti elementi caricare.
+* Vantaggi:
+* Facile da implementare e comprendere.
+   * Comodo per situazioni con una quantità fissa di dati.
+   * Buona per scenari dove l’ordine dei dati non cambia frequentemente tra le richieste.
+
+Questo progetto usa Panache e Hibernate ORM e implementare entrambe le tipologie di paginazione è semplice. Con Panache, la paginazione è gestita tramite metodi come `range(startIndex, endIndex)` e cursori per la paginazione basata su cursori.
+
+Per questo progetto la scelta è ricaduta sulla paginazione con cursori, poiché è più efficiente per dataset di grandi dimensioni e operazioni di ricerca. Inoltre, è più adatta per dataset in continuo cambiamento o con scorrimento infinito.
+
+Quali sono i passaggi per implementare la paginazione con cursori?
+
+1. **Calcolare i cursori**: Ogni elemento deve avere un identificatore univoco (cursor) che viene utilizzato per navigare tra le pagine.
+2. **Aggiungere i cursori alla query**: Utilizzare i cursori per recuperare i dati in base alla posizione.
+3. **Ritornare i cursori e le informazioni di paginazione**: Oltre ai dati, ritornare i cursori per ciascun elemento e le informazioni di paginazione (ad es. hasNextPage, endCursor).
+4. **Gestire i cursori nella query successiva**: Utilizzare i cursori ritornati per recuperare i dati nella query successiva.
+5. **Implementare la logica di paginazione**: Gestire la logica di paginazione nel resolver GraphQL.
+
+Per implementare la paginazione con cursori, abbiamo bisogno di tre elementi principali: BookConnection, BookEdge e PageInfo.
+Questi elementi giocano un ruolo fondamentale nella paginazione basata su cursori in GraphQL. Questi oggetti rappresentano la struttura della risposta, che include i dati e le informazioni necessarie per navigare tra le pagine di risultati.
+
+### BookConnection
+L’oggetto BookConnection rappresenta una “connessione” di elementi che può contenere più edge (in questo caso, più libri). Contiene i dati relativi agli edge (i singoli libri con i loro cursori) e le informazioni di paginazione (ad esempio, se esistono altre pagine di dati).
+
+I ruoli principali di BookConnection sono:
+* aggregare gli edges (elementi della lista, in questo caso i libri).
+* includere un oggetto PageInfo per fornire dettagli sulla paginazione (se ci sono pagine successive, cursore finale, ecc.).
+
+A seguire un esempio di implementazione di BookConnection che è un Type GraphQL (vedi annotazione `@Type`). Il codice completo è disponibile nel progetto di esempio in [BookConnection.java](src/main/java/it/dontesta/labs/quarkus/graphql/pagination/type/BookConnection.java).
+
+```java
+package it.dontesta.labs.quarkus.graphql.pagination.type;
+
+import org.eclipse.microprofile.graphql.Type;
+import java.util.List;
+
+/**
+ * Represents a connection to a list of Book edges with pagination information.
+ */
+@Type
+public class BookConnection {
+
+   /**
+    * A list of Book edges.
+    */
+   public List<BookEdge> edges;
+
+   /**
+    * Pagination information for the connection.
+    */
+   public PageInfo pageInfo;
+
+   /**
+    * Constructs a new BookConnection instance.
+    *
+    * @param edges a list of Book edges
+    * @param pageInfo pagination information for the connection
+    */
+   public BookConnection(List<BookEdge> edges, PageInfo pageInfo) {
+      this.edges = edges;
+      this.pageInfo = pageInfo;
+   }
+}
+```
+
+### BookEdge
+Ogni BookEdge rappresenta un singolo libro all’interno di una connessione di dati. L’edge è il legame tra il libro e il cursore che ti permette di navigare tra le pagine.
+
+I ruoli principali di BookEdge sono:
+* contiene il node, che rappresenta il libro vero e proprio (l’oggetto Book).
+* contiene il cursor, che è un identificatore univoco codificato (solitamente in Base64) che permette di fare paginazione tra le pagine successive.
+
+A seguie un esempio di implementazione di BookEdge che è un Type GraphQL (vedi annotazione `@Type`). Il codice completo è disponibile nel progetto di esempio in [BookEdge.java](src/main/java/it/dontesta/labs/quarkus/graphql/pagination/type/BookEdge.java).
+
+```java
+package it.dontesta.labs.quarkus.graphql.pagination.type;
+
+import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Book;
+import org.eclipse.microprofile.graphql.Type;
+
+/**
+ * Represents an edge in a connection, containing a node and a cursor.
+ */
+@Type
+public class BookEdge {
+
+    /**
+     * The node of type Book.
+     */
+    public Book node;
+
+    /**
+     * The cursor for this edge.
+     */
+    public String cursor;
+
+    /**
+     * Constructs a new BookEdge instance.
+     *
+     * @param node the Book node
+     * @param cursor the cursor for this edge
+     */
+    public BookEdge(Book node, String cursor) {
+        this.node = node;
+        this.cursor = cursor;
+    }
+}
+```
+
+### PageInfo
+L’oggetto PageInfo contiene informazioni cruciali sulla paginazione, come se ci sono altre pagine di dati disponibili e quale sarà il cursore finale per la navigazione alla pagina successiva.
+
+I ruoli principali di PageInfo sono:
+* hasNextPage: Indica se ci sono ulteriori pagine da caricare. Se la lista di libri contiene un numero inferiore a quello richiesto (es. 10 libri su 20), questo campo sarà true, indicando che ci sono più pagine disponibili.
+* endCursor: È il cursore dell’ultimo elemento nella lista corrente, che puoi usare come after nelle query successive per ottenere la pagina successiva.
+
+A seguire un esempio di implementazione di PageInfo che è un Type GraphQL (vedi annotazione `@Type`). Il codice completo è disponibile nel progetto di esempio in [PageInfo.java](src/main/java/it/dontesta/labs/quarkus/graphql/pagination/type/PageInfo.java).
+
+```java
+package it.dontesta.labs.quarkus.graphql.pagination.type;
+
+import org.eclipse.microprofile.graphql.Type;
+
+/**
+ * Represents pagination information for GraphQL queries.
+ */
+@Type
+public class PageInfo {
+
+    /**
+     * Indicates if there is a next page available.
+     */
+    public boolean hasNextPage;
+
+    /**
+     * The cursor to the end of the current page.
+     */
+    public String endCursor;
+
+    /**
+     * Constructs a new PageInfo instance.
+     *
+     * @param hasNextPage indicates if there is a next page available
+     * @param endCursor the cursor to the end of the current page
+     */
+    public PageInfo(boolean hasNextPage, String endCursor) {
+        this.hasNextPage = hasNextPage;
+        this.endCursor = endCursor;
+    }
+}
+```
+
+### Come funzionano insieme BookConnection, BookEdge e PageInfo?
+
+1. BookConnection: È il punto centrale della risposta, che contiene sia i BookEdge (gli elementi reali) sia le informazioni di paginazione attraverso l’oggetto PageInfo.
+2. BookEdge: Ogni edge contiene il libro stesso (l’oggetto Book) e un cursore univoco che consente di navigare attraverso le pagine.
+3. PageInfo: Fornisce informazioni critiche per il cliente, come se esistono pagine successive e quale cursore usare per la pagina successiva.
+
+### Modifica al resolver BookGraphQLResource
+Per implementare la paginazione con cursori, dobbiamo apportare alcune modifiche al resolver `BookGraphQLResource`. In particolare, dobbiamo aggiungere un nuovo metodo `books` che accetti i parametri di paginazione come `first` (per il numero di libri da recuperare) e `after` (per il cursore dell’elemento precedente). Fatto ciò, utilizzare Panache per recuperare i libri in modo paginato e restituire una lista di `BookEdge` con i relativi cursori.
+
+A seguire l'implementazione del metodo `books` che accetta i parametri di paginazione e restituisce una `BookConnection` con i libri e le informazioni di paginazione. Il codice completo è disponibile nel progetto di esempio in [BookGraphQLResource.java](src/main/java/it/dontesta/labs/quarkus/graphql/resource/BookGraphQLResource.java).
+
+```java
+    /**
+     * Retrieves a paginated list of books.
+     *
+     * @param first the number of books to retrieve
+     * @param after the cursor after which to start retrieving books
+     * @return a BookConnection containing the list of books and pagination information
+     * @throws GraphQLException if an error occurs during retrieval
+     */
+    @Query
+    public BookConnection books(@Name("first") int first,
+            @NotEmpty @NotNull @Name("after") String after)
+            throws GraphQLException {
+        int startIndex = 0;
+
+        // Decode the cursor to get the start index
+        if (after != null) {
+            try {
+                String decoded = new String(Base64.getDecoder().decode(after));
+                startIndex = Integer.parseInt(decoded) + 1;
+            } catch (IllegalArgumentException e) {
+                throw new GraphQLException("Invalid cursor format", e);
+            }
+        }
+
+        // Query Panache to get the books
+        PanacheQuery<Book> query = Book.findAll();
+        List<Book> books = query.range(startIndex, startIndex + first - 1).list();
+
+        // Create the edges response with the cursor
+        List<BookEdge> edges = books.stream()
+                .map(book -> {
+                    String cursor = Base64.getEncoder().encodeToString(String.valueOf(book.id).getBytes());
+                    return new BookEdge(book, cursor);
+                })
+                .toList();
+
+        // Check if there are more pages
+        String endCursor = edges.isEmpty() ? null : edges.get(edges.size() - 1).cursor;
+        boolean hasNextPage = (startIndex + first) < query.count();
+
+        return new BookConnection(edges, new PageInfo(hasNextPage, endCursor));
+    }
+```
+
+Usando il metodo `range(startIndex, startIndex + first - 1)` di Panache, possiamo recuperare i libri in modo paginato. Aggiungiamo i cursori (codificati in Base64) per ciascun libro e restituiamo una lista di `BookEdge` insieme alle informazioni di paginazione. Come ultimo passaggio, verifichiamo se ci sono altre pagine disponibili e restituiamo una `BookConnection` con i libri e le informazioni di paginazione.
+
+I cursori sono codificati in Base64 per garantire che siano univoci e sicuri da usare nelle query. La funzione encodeCursor codifica l’ID del libro, mentre decodeCursor lo decodifica per usarlo nella query successiva.
+
+Queste modifiche al BookGraphQLResource ti permettono di implementare la paginazione basata su cursori in GraphQL. La struttura della risposta include un oggetto `BookConnection`, che contiene gli `BookEdge` (con i libri e i cursori) e le informazioni di paginazione tramite PageInfo.
+
+
+### Test della paginazione con cursori
+Per testare la paginazione con cursori, possiamo utilizzare la query `books` per recuperare per esempio i primi tre libri. La query `books` accetta due parametri: `first` (il numero di elementi da recuperare) e `after` (il cursore per la navigazione dove MA== vuol dire 0).
+
+```graphql
+query {
+  books(first: 3, after: "MA==") {
+    edges {
+      node {
+        id
+        title
+        authors {
+          firstName
+          lastName
+        }
+        isbn
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+```
+
+L'output atteso sarà simile a quello riportato di seguito; dove `edges` contiene i libri recuperati con i loro cursori (codificati in Base64), `pageInfo` indica che ci sono altre pagine disponibili (`hasNextPage`: true) e fornisce l’`endCursor` per ottenere la pagina successiva.
+
+```json
+{
+   "data": {
+      "books": {
+         "edges": [
+            {
+               "node": {
+                  "id": 4,
+                  "title": "Enhanced multimedia interface",
+                  "authors": [
+                     {
+                        "firstName": "David",
+                        "lastName": "Jones"
+                     },
+                     {
+                        "firstName": "Sarah",
+                        "lastName": "Miller"
+                     }
+                  ],
+                  "isbn": "9780230278458"
+               },
+               "cursor": "NA=="
+            },
+            {
+               "node": {
+                  "id": 5,
+                  "title": "Optimized data throughput",
+                  "authors": [
+                     {
+                        "firstName": "Michael",
+                        "lastName": "Davis"
+                     },
+                     {
+                        "firstName": "Jessica",
+                        "lastName": "Wilson"
+                     }
+                  ],
+                  "isbn": "9781473689271"
+               },
+               "cursor": "NQ=="
+            },
+            {
+               "node": {
+                  "id": 6,
+                  "title": "Decentralized systems integration",
+                  "authors": [
+                     {
+                        "firstName": "Christopher",
+                        "lastName": "Garcia"
+                     },
+                     {
+                        "firstName": "Ashley",
+                        "lastName": "Rodriguez"
+                     }
+                  ],
+                  "isbn": "9781607436911"
+               },
+               "cursor": "Ng=="
+            }
+         ],
+         "pageInfo": {
+            "hasNextPage": true,
+            "endCursor": "Ng=="
+         }
+      }
+   }
+}
+```
+
+L'output a seguire mostra invece la query per recuperare la pagina successiva di libri utilizzando il cursore `endCursor` restituito da un precedente query. In questo risultato è evidente che `hasNextPage` è `false`, indicando che non ci sono altre pagine disponibili.
+
+```json
+{
+  "data": {
+    "books": {
+      "edges": [
+        {
+          "node": {
+            "id": 16,
+            "title": "Machine Learning Algorithms",
+            "authors": [],
+            "isbn": "9780596805190"
+          },
+          "cursor": "MTY="
+        }
+      ],
+      "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": "MTY="
+      }
+    }
+  }
+}
+```
 
 ## Creazione dell'artefatto ed eseguire l’applicazione
 
