@@ -4,13 +4,20 @@
  */
 package it.dontesta.labs.quarkus.graphql.ws.graphql.api;
 
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Author;
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Book;
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Editor;
+import it.dontesta.labs.quarkus.graphql.pagination.type.BookConnection;
+import it.dontesta.labs.quarkus.graphql.pagination.type.BookEdge;
+import it.dontesta.labs.quarkus.graphql.pagination.type.PageInfo;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Base64;
 import org.eclipse.microprofile.graphql.*;
 
 import java.util.List;
@@ -21,18 +28,79 @@ public class BookGraphQL {
     @Inject
     EntityManager entityManager;
 
+    /**
+     * Retrieves a paginated list of books.
+     *
+     * @param first the number of books to retrieve
+     * @param after the cursor after which to start retrieving books
+     * @return a BookConnection containing the list of books and pagination information
+     * @throws GraphQLException if an error occurs during retrieval
+     */
+    @Query
+    public BookConnection books(@Name("first") int first,
+            @NotEmpty @NotNull @Name("after") String after)
+            throws GraphQLException {
+        int startIndex = 0;
+
+        // Decode the cursor to get the start index
+        if (after != null) {
+            try {
+                String decoded = new String(Base64.getDecoder().decode(after));
+                startIndex = Integer.parseInt(decoded) + 1;
+            } catch (IllegalArgumentException e) {
+                throw new GraphQLException("Invalid cursor format", e);
+            }
+        }
+
+        // Query Panache to get the books
+        PanacheQuery<Book> query = Book.findAll();
+        List<Book> books = query.range(startIndex, startIndex + first - 1).list();
+
+        // Create the edges response with the cursor
+        List<BookEdge> edges = books.stream()
+                .map(book -> {
+                    String cursor = Base64.getEncoder().encodeToString(String.valueOf(book.id).getBytes());
+                    return new BookEdge(book, cursor);
+                })
+                .toList();
+
+        // Check if there are more pages
+        String endCursor = edges.isEmpty() ? null : edges.get(edges.size() - 1).cursor;
+        boolean hasNextPage = (startIndex + first) < query.count();
+
+        return new BookConnection(edges, new PageInfo(hasNextPage, endCursor));
+    }
+
+    /**
+     * Retrieves all books.
+     *
+     * @return a list of all books
+     */
     @Query
     @Description("Get all books")
     public List<Book> allBooks() {
         return Book.listAll();
     }
 
+    /**
+     * Retrieves a book by its ID.
+     *
+     * @param id the ID of the book to retrieve
+     * @return the book with the specified ID
+     */
     @Query
     @Description("Get a book by id")
     public Book getBook(@Name("bookId") Long id) {
         return Book.findById(id);
     }
 
+    /**
+     * Creates a new book.
+     *
+     * @param book the book to create
+     * @return the created book
+     * @throws GraphQLException if an error occurs during creation
+     */
     @Mutation
     @Description("Create a new book")
     @Transactional
@@ -46,11 +114,19 @@ public class BookGraphQL {
         return book;
     }
 
+    /**
+     * Adds authors to a book by its ID.
+     *
+     * @param bookId the ID of the book
+     * @param authorIds the IDs of the authors to add
+     * @return the updated book
+     * @throws GraphQLException if the book or authors are not found
+     */
     @Mutation
     @Description("Delete a book by id")
     @Transactional
     public Book addAuthorsToBook(@Name("bookId") Long bookId, List<Long> authorIds)
-        throws GraphQLException {
+            throws GraphQLException {
         Book book = getBook(bookId);
         if (book == null) {
             throw new GraphQLException("Book not found with Id %d".formatted(bookId));
@@ -60,6 +136,12 @@ public class BookGraphQL {
         return book;
     }
 
+    /**
+     * Handles the editor of a book.
+     *
+     * @param book the book whose editor is to be handled
+     * @throws GraphQLException if the editor is not found
+     */
     private void handleEditor(Book book) throws GraphQLException {
         if (book.editor != null && book.editor.id != null) {
             Editor foundEditor = Editor.findById(book.editor.id);
@@ -70,6 +152,12 @@ public class BookGraphQL {
         }
     }
 
+    /**
+     * Handles the authors of a book.
+     *
+     * @param book the book whose authors are to be handled
+     * @throws GraphQLException if any author is not found
+     */
     private void handleAuthors(Book book) throws GraphQLException {
         if (book.authors != null) {
             List<Author> updatedAuthors = new ArrayList<>();
