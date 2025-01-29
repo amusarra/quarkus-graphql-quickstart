@@ -695,10 +695,10 @@ public class PageInfo {
 2. BookEdge: ogni edge contiene il libro stesso (l’oggetto `Book`) e un cursore univoco che consente di navigare attraverso le pagine.
 3. PageInfo: fornisce informazioni critiche per il cliente, come se esistono pagine successive e quale cursore usare per la pagina successiva.
 
-### Modifica al resolver BookGraphQLResource
-Per implementare la paginazione con cursori, dobbiamo apportare alcune modifiche al resolver `BookGraphQLResource`. In particolare, dobbiamo aggiungere un nuovo metodo `books` che accetti i parametri di paginazione come `first` (per il numero di libri da recuperare) e `after` (per il cursore dell’elemento precedente). Fatto ciò, utilizzare Panache per recuperare i libri in modo paginato e restituire una lista di `BookEdge` con i relativi cursori.
+### Modifica al resolver BookGraphQL
+Per implementare la paginazione con cursori, dobbiamo apportare alcune modifiche al resolver `BookGraphQL`. In particolare, dobbiamo aggiungere un nuovo metodo `books` che accetti i parametri di paginazione come `first` (per il numero di libri da recuperare) e `after` (per il cursore dell’elemento precedente). Fatto ciò, utilizzare Panache per recuperare i libri in modo paginato e restituire una lista di `BookEdge` con i relativi cursori.
 
-A seguire l'implementazione del metodo `books` che accetta i parametri di paginazione e restituisce una `BookConnection` con i libri e le informazioni di paginazione. Il codice completo è disponibile nel progetto di esempio in [BookGraphQLResource.java](src/main/java/it/dontesta/labs/quarkus/graphql/resource/BookGraphQLResource.java).
+A seguire l'implementazione del metodo `books` che accetta i parametri di paginazione e restituisce una `BookConnection` con i libri e le informazioni di paginazione. Il codice completo è disponibile nel progetto di esempio in [BookGraphQL.java](src/main/java/it/dontesta/labs/quarkus/graphql/ws/graphql/api/BookGraphQL.java).
 
 ```java
     /**
@@ -748,8 +748,9 @@ Usando il metodo `range(startIndex, startIndex + first - 1)` di Panache, possiam
 
 I cursori sono codificati in Base64 per garantire che siano univoci e sicuri da usare nelle query. La funzione encodeCursor codifica l’ID del libro, mentre decodeCursor lo decodifica per usarlo nella query successiva.
 
-Queste modifiche al BookGraphQLResource ti permettono di implementare la paginazione basata su cursori in GraphQL. La struttura della risposta include un oggetto `BookConnection`, che contiene gli `BookEdge` (con i libri e i cursori) e le informazioni di paginazione tramite PageInfo.
+Queste modifiche al BookGraphQL ti permettono di implementare la paginazione basata su cursori in GraphQL. La struttura della risposta include un oggetto `BookConnection`, che contiene gli `BookEdge` (con i libri e i cursori) e le informazioni di paginazione tramite PageInfo.
 
+Allo stesso modo, puoi implementare la paginazione con cursori per altri tipi di dati, come autori, editori o qualsiasi altra entità. La struttura è simile, con un oggetto Connection che contiene gli Edge e le informazioni di paginazione.
 
 ### Test della paginazione con cursori
 Per testare la paginazione con cursori, possiamo utilizzare la query `books` per recuperare per esempio i primi tre libri. La query `books` accetta due parametri: `first` (il numero di elementi da recuperare) e `after` (il cursore per la navigazione dove MA== vuol dire 0).
