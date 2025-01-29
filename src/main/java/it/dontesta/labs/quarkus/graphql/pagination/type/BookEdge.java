@@ -12,12 +12,12 @@ public class BookEdge {
     /**
      * The node of type Book.
      */
-    public Book node;
+    private final Book node;
 
     /**
      * The cursor for this edge.
      */
-    public String cursor;
+    private final String cursor;
 
     /**
      * Constructs a new BookEdge instance.
@@ -25,8 +25,37 @@ public class BookEdge {
      * @param node the Book node
      * @param cursor the cursor for this edge
      */
-    public BookEdge(Book node, String cursor) {
+    private BookEdge(Book node, String cursor) {
         this.node = node;
         this.cursor = cursor;
+    }
+
+    /**
+     * Creates a new BookEdge instance.
+     *
+     * @param node the Book node
+     * @param cursor the cursor for this edge
+     * @return a new BookEdge instance
+     */
+    public static BookEdge create(Book node, String cursor) {
+        return new BookEdge(node, cursor);
+    }
+
+    /**
+     * Returns the Book node.
+     *
+     * @return the Book node
+     */
+    public Book getNode() {
+        return node;
+    }
+
+    /**
+     * Returns the cursor for this edge.
+     *
+     * @return the cursor
+     */
+    public String getCursor() {
+        return cursor;
     }
 }

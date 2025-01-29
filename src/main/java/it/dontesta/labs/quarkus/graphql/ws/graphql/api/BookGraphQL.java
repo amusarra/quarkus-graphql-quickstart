@@ -40,16 +40,15 @@ public class BookGraphQL {
     public BookConnection books(@Name("first") int first,
             @NotEmpty @NotNull @Name("after") String after)
             throws GraphQLException {
-        int startIndex = 0;
+
+        int startIndex;
 
         // Decode the cursor to get the start index
-        if (after != null) {
-            try {
-                String decoded = new String(Base64.getDecoder().decode(after));
-                startIndex = Integer.parseInt(decoded) + 1;
-            } catch (IllegalArgumentException e) {
-                throw new GraphQLException("Invalid cursor format", e);
-            }
+        try {
+            String decoded = new String(Base64.getDecoder().decode(after));
+            startIndex = Integer.parseInt(decoded) + 1;
+        } catch (IllegalArgumentException e) {
+            throw new GraphQLException("Invalid cursor format", e);
         }
 
         // Query Panache to get the books
@@ -60,15 +59,15 @@ public class BookGraphQL {
         List<BookEdge> edges = books.stream()
                 .map(book -> {
                     String cursor = Base64.getEncoder().encodeToString(String.valueOf(book.id).getBytes());
-                    return new BookEdge(book, cursor);
+                    return BookEdge.create(book, cursor);
                 })
                 .toList();
 
         // Check if there are more pages
-        String endCursor = edges.isEmpty() ? null : edges.get(edges.size() - 1).cursor;
+        String endCursor = edges.isEmpty() ? null : edges.get(edges.size() - 1).getCursor();
         boolean hasNextPage = (startIndex + first) < query.count();
 
-        return new BookConnection(edges, new PageInfo(hasNextPage, endCursor));
+        return BookConnection.create(edges, PageInfo.create(hasNextPage, endCursor));
     }
 
     /**

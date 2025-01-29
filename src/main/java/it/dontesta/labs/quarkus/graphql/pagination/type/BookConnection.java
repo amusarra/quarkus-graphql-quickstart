@@ -12,12 +12,12 @@ public class BookConnection {
     /**
      * A list of Book edges.
      */
-    public List<BookEdge> edges;
+    private final List<BookEdge> edges;
 
     /**
      * Pagination information for the connection.
      */
-    public PageInfo pageInfo;
+    private final PageInfo pageInfo;
 
     /**
      * Constructs a new BookConnection instance.
@@ -25,8 +25,37 @@ public class BookConnection {
      * @param edges a list of Book edges
      * @param pageInfo pagination information for the connection
      */
-    public BookConnection(List<BookEdge> edges, PageInfo pageInfo) {
+    private BookConnection(List<BookEdge> edges, PageInfo pageInfo) {
         this.edges = edges;
         this.pageInfo = pageInfo;
+    }
+
+    /**
+     * Creates a new BookConnection instance.
+     *
+     * @param edges a list of Book edges
+     * @param pageInfo pagination information for the connection
+     * @return a new BookConnection instance
+     */
+    public static BookConnection create(List<BookEdge> edges, PageInfo pageInfo) {
+        return new BookConnection(edges, pageInfo);
+    }
+
+    /**
+     * Returns the list of Book edges.
+     *
+     * @return the list of Book edges
+     */
+    public List<BookEdge> getEdges() {
+        return edges;
+    }
+
+    /**
+     * Returns the pagination information for the connection.
+     *
+     * @return the pagination information
+     */
+    public PageInfo getPageInfo() {
+        return pageInfo;
     }
 }

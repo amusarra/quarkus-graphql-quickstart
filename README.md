@@ -7,23 +7,17 @@
 ![CI Docker build](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish.yml/badge.svg)
 ![CI Docker build native amd64](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish_native_amd64.yml/badge.svg)
 
-Questo progetto è una dimostrazione di un’applicazione Quarkus che espone dati attraverso una API RESTful (`quarkus-rest`) 
-tradizionale e una API GraphQL (`quarkus-smallrye-graphql`). Il progetto utilizza Hibernate ORM con Panache 
-(`quarkus-hibernate-orm-panache`) per la persistenza dei dati e include configurazioni per database H2 (per sviluppo), 
-PostgreSQL (per profili di produzione) e MinIO come Object Store S3 (`io.quarkiverse.minio:quarkus-minio`).
+Questo progetto è una dimostrazione di un’applicazione Quarkus che espone dati attraverso una API RESTful (`quarkus-rest`) tradizionale e una API GraphQL (`quarkus-smallrye-graphql`). Il progetto utilizza Hibernate ORM con Panache (`quarkus-hibernate-orm-panache`) per la persistenza dei dati e include configurazioni per database H2 (per sviluppo), PostgreSQL (per profili di produzione) e MinIO come Object Store S3 (`io.quarkiverse.minio:quarkus-minio`).
 
-MinIO è un server di storage degli oggetti ad alte prestazioni, distribuito e compatibile con Amazon S3 facilmente
-integrabile con Quarkus per via dell'estensione `quarkus-minio` e dei DevService.
+[MinIO](https://min.io/) è un server di storage degli oggetti ad alte prestazioni, distribuito e compatibile con Amazon S3 facilmente integrabile con Quarkus per via dell'estensione `quarkus-minio` e dei DevService.
 
-GraphQL è un linguaggio di query per API che consente ai client di richiedere esattamente i dati necessari, evitando 
-over-fetching o under-fetching. A differenza delle API REST, offre un singolo endpoint attraverso il quale il client 
-può ottenere dati strutturati in base alle proprie esigenze.
+[GraphQL](https://graphql.org/) è un linguaggio di query per API che consente ai client di richiedere esattamente i dati necessari, evitando over-fetching o under-fetching. A differenza delle API REST, offre un singolo endpoint attraverso il quale il client può ottenere dati strutturati in base alle proprie esigenze.
 
 Vantaggi principali rispetto alle API custom:
-1.	Flessibilità: Il client decide quali dati ottenere, riducendo payload inutili.
-2.	Performance: Minore numero di chiamate, grazie all’aggregazione di dati da più fonti in una singola query.
-3.	Evolvibilità: Cambiamenti al backend possono essere introdotti senza rompere le query esistenti.
-4.	Standardizzazione: L’uso di GraphQL riduce la necessità di progettare API ad hoc, semplificando sviluppo e manutenzione.
+1. Flessibilità: Il client decide quali dati ottenere, riducendo payload inutili.
+2. Performance: Minore numero di chiamate, grazie all’aggregazione di dati da più fonti in una singola query.
+3. Evolvibilità: Cambiamenti al backend possono essere introdotti senza rompere le query esistenti.
+4. Standardizzazione: L’uso di GraphQL riduce la necessità di progettare API ad hoc, semplificando sviluppo e manutenzione.
 
 Questo approccio migliora la user experience e accelera lo sviluppo di applicazioni client e server.
 
@@ -37,7 +31,7 @@ Questo approccio migliora la user experience e accelera lo sviluppo di applicazi
 | **Riduzione delle chiamate**: ottimizza le comunicazioni client-server.            | **Setup iniziale**: richiede più configurazione e strumenti rispetto a REST.              |
 
 > **Nota**: Questo progetto ha un approccio educativo e dimostrativo. Volutamente ci sono parti di codice non complete
->ma con commenti per guidare l'utente a completare l'implementazione. Per esempio
+>ma con commenti per guidare l'utente a completare l'implementazione. Per esempio:
 > ```java
 >    @Mutation
 >    @Description("Create a new author")
@@ -87,7 +81,7 @@ A seguire sono riportati i principali endpoint dell'applicazione.
 | `/q/dev-ui/io.quarkus.quarkus-smallrye-openapi/schema-json` | Schema  | Endpoint dello schema OpenAPI in formato JSON      |
 | `/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-schema` | Schema  | Endpoint dello schema GraphQL                      |
 
-Tabelle 1 - Endpoint principali dell'applicazione Quarkus GraphQL
+Tabella 1 - Endpoint principali dell'applicazione Quarkus GraphQL
 
 ## Requisiti
 
@@ -101,7 +95,7 @@ Per eseguire o sviluppare il progetto, assicurati di avere installati i seguenti
 
 ## Quickstart
 
-Per eseguire il progetto in modalità sviluppo (o dev) e testare le funzionalità GraphQL e REST, devi seguire i seguenti
+Per lanciare il progetto in modalità sviluppo (o dev) e testare le funzionalità GraphQL e REST, devi seguire i seguenti
 passaggi:
 
 1. clonazione del repository git del progetto;
@@ -130,9 +124,9 @@ Per avviare l'applicazione in modalità sviluppo, esegui il comando:
 quarkus dev
 ```
 
-> **Nota**: Prima di avviare l'applicazione in modalità nativa, assicurati di aver installato e configurato correttamente
+> **Nota**: Prima di avviare l'applicazione in modalità dev, assicurati di aver installato e configurato correttamente
 > Docker o Podman sul tuo sistema. Nel caso di errata configurazione o mancanza di Docker o Podman, l'applicazione
-> non verrà avviata correttamente e potresti riscontrare errori come quelli riportati di seguito:
+> non sarà avviata correttamente e potresti riscontrare errori come quelli riportati di seguito:
 > 
 > ```shell
 > 2025-01-29 09:33:31,911 WARN  [org.tes.doc.DockerClientProviderStrategy] (build-26) DOCKER_HOST unix:///var/run/docker.sock is not listening: java.io.IOException: com.sun.jna.LastErrorException: [61] Connection refused
@@ -148,11 +142,12 @@ Per testare le API GraphQL e REST, apri il browser e visita i seguenti URL:
 * API GraphQL usando la UI GraphiQL: <http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-ui>
 * API REST usando la Swagger UI: <http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-openapi/swagger-ui>
 
-Tramite la UI GraphiQL, puoi eseguire query e mutation per recuperare e modificare i dati del database.
-A seguire è riportata una demo di esempio su come eseguire query GraphQL per recuperare e creare libri, autori ed editori
+Tramite la UI [GraphiQL](https://github.com/graphql/graphiql), puoi eseguire query e [mutation](https://graphql.org/learn/mutations/) per recuperare e modificare i dati del database. A seguire è riportata una demo di esempio su come eseguire query GraphQL per recuperare e creare libri, autori ed editori
 oltre a creare recuperare oggetti S3 dall'Object Store MinIO.
 
 ![Demo di esempio su come eseguire query GraphQL](src/main/docs/resources/images/demo-graphql-ui.gif)
+
+Animazione 1 - Demo di esempio su come eseguire query GraphQL
 
 A seguire le query di esempio utilizzate nella demo:
 
@@ -292,8 +287,7 @@ query getFile {
 }
 ```
 
-È possibile eseguire il test delle query e mutation GraphQL anche tramite cURL, Postman o qualsiasi altro client HTTP.
-A seguire un esempio di query GraphQL per recuperare tutti i libri:
+Puoi eseguire il test delle query e mutation GraphQL anche tramite cURL, Postman o qualsiasi altro client HTTP. A seguire un esempio di query GraphQL per recuperare tutti i libri:
 
 ```shell
 curl -k -X POST http://localhost:8080/api/graphql \
@@ -411,11 +405,11 @@ L'output della query sarà simile a quello riportato di seguito:
 }
 ```
 
-Tramite la Swagger UI, puoi eseguire richieste REST per recuperare, creare, aggiornare ed eliminare libri e autori oltre 
-che caricare e scaricare file su MinIO. Dalla Swagger UI puoi anche vedere lo schema OpenAPI in formato JSON e YAML e 
-le eventuali chiamate che puoi eseguire tramite cURL.
+Tramite la Swagger UI, puoi eseguire richieste REST per recuperare, creare, aggiornare ed eliminare libri e autori oltre che caricare e scaricare file su MinIO. Dalla Swagger UI puoi anche vedere lo schema OpenAPI in formato JSON e YAML e le eventuali chiamate che puoi eseguire tramite cURL.
 
 ![OpenAPI SwaggerUI per eseguire richieste REST](src/main/docs/resources/images/openapi-ui.jpg)
+
+Figura 2 - OpenAPI SwaggerUI per eseguire richieste REST
 
 ## Configurazione dell'applicazione
 I punti salienti della configurazione dell'applicazione riguardano:
@@ -427,12 +421,10 @@ I punti salienti della configurazione dell'applicazione riguardano:
 5. configurazione MinIO
 6. configurazione estensione OpenShift
 
-Per applicare modifiche all'attuale configurazione dell'applicazione, agire sul file 
-'src/main/resources/application.properties'
+Per applicare modifiche all'attuale configurazione dell'applicazione, agire sul file [application.properties](src/main/resources/application.properties)
 
 ## Implementazione del supporto alla paginazione
-Quando si lavora con grandi dataset, la paginazione è fondamentale per ottimizzare le performance e migliorare 
-l’esperienza utente. Con GraphQL, possiamo implementare facilmente la paginazione, utilizzando sia il modello cursor-based che l’approccio tradizionale offset-based.
+Quando si lavora con grandi dataset, la paginazione è fondamentale per ottimizzare le performance e migliorare l’esperienza utente. Con GraphQL, possiamo implementare facilmente la paginazione, utilizzando sia il modello **cursor-based** che l’approccio tradizionale **offset-based**.
 
 Questa tabella comparativa ti aiuterà a visualizzare rapidamente le differenze tra paginazione con cursori e 
 paginazione con offset.
@@ -448,7 +440,7 @@ paginazione con offset.
 
 Tabella 2 - Confronto tra Cursor-Based e Offset-Based Pagination
 
-Dettagliando la tabella precedentemente mostrata, possiamo evidenziare i seguenti punti:
+Espandendo il contenuto della tabella precedentemente, possiamo evidenziare i seguenti punti:
 
 **Cursor-Based Pagination (Basata su Cursori)**
 * Principio: Ogni elemento ha un identificatore unico (cursor) che viene utilizzato per navigare tra le pagine.
@@ -464,11 +456,11 @@ Dettagliando la tabella precedentemente mostrata, possiamo evidenziare i seguent
    * Comodo per situazioni con una quantità fissa di dati.
    * Buona per scenari dove l’ordine dei dati non cambia frequentemente tra le richieste.
 
-Questo progetto usa Panache e Hibernate ORM e implementare entrambe le tipologie di paginazione è semplice. Con Panache, la paginazione è gestita tramite metodi come `range(startIndex, endIndex)` e cursori per la paginazione basata su cursori.
+Questo progetto usa [Panache](https://quarkus.io/guides/hibernate-orm-panache) e [Hibernate ORM](https://quarkus.io/guides/hibernate-orm) e implementare entrambe le tipologie di paginazione è semplice. Con Panache, la paginazione è gestita tramite metodi come `range(startIndex, endIndex)` e cursori per la paginazione basata su cursori.
 
 Per questo progetto la scelta è ricaduta sulla paginazione con cursori, poiché è più efficiente per dataset di grandi dimensioni e operazioni di ricerca. Inoltre, è più adatta per dataset in continuo cambiamento o con scorrimento infinito.
 
-Quali sono i passaggi per implementare la paginazione con cursori?
+**Quali sono i passaggi per implementare la paginazione con cursori?**
 
 1. **Calcolare i cursori**: Ogni elemento deve avere un identificatore univoco (cursor) che viene utilizzato per navigare tra le pagine.
 2. **Aggiungere i cursori alla query**: Utilizzare i cursori per recuperare i dati in base alla posizione.
@@ -476,17 +468,17 @@ Quali sono i passaggi per implementare la paginazione con cursori?
 4. **Gestire i cursori nella query successiva**: Utilizzare i cursori ritornati per recuperare i dati nella query successiva.
 5. **Implementare la logica di paginazione**: Gestire la logica di paginazione nel resolver GraphQL.
 
-Per implementare la paginazione con cursori, abbiamo bisogno di tre elementi principali: BookConnection, BookEdge e PageInfo.
+Per implementare la paginazione con cursori, abbiamo bisogno di tre elementi principali: `BookConnection`, `BookEdge` e `PageInfo`.
 Questi elementi giocano un ruolo fondamentale nella paginazione basata su cursori in GraphQL. Questi oggetti rappresentano la struttura della risposta, che include i dati e le informazioni necessarie per navigare tra le pagine di risultati.
 
-### BookConnection
-L’oggetto BookConnection rappresenta una “connessione” di elementi che può contenere più edge (in questo caso, più libri). Contiene i dati relativi agli edge (i singoli libri con i loro cursori) e le informazioni di paginazione (ad esempio, se esistono altre pagine di dati).
+### Cosè BookConnection
+L’oggetto `BookConnection` rappresenta una **connessione di elementi che può contenere più edge** (in questo caso, più libri). Contiene i dati relativi agli edge (i singoli libri con i loro cursori) e le informazioni di paginazione (ad esempio, se esistono altre pagine di dati).
 
 I ruoli principali di BookConnection sono:
 * aggregare gli edges (elementi della lista, in questo caso i libri).
 * includere un oggetto PageInfo per fornire dettagli sulla paginazione (se ci sono pagine successive, cursore finale, ecc.).
 
-A seguire un esempio di implementazione di BookConnection che è un Type GraphQL (vedi annotazione `@Type`). Il codice completo è disponibile nel progetto di esempio in [BookConnection.java](src/main/java/it/dontesta/labs/quarkus/graphql/pagination/type/BookConnection.java).
+A seguire un esempio di implementazione di `BookConnection` che è un Type GraphQL (vedi annotazione `@Type`). Il codice completo è disponibile nel progetto di esempio in [BookConnection.java](src/main/java/it/dontesta/labs/quarkus/graphql/pagination/type/BookConnection.java).
 
 ```java
 package it.dontesta.labs.quarkus.graphql.pagination.type;
@@ -500,37 +492,66 @@ import java.util.List;
 @Type
 public class BookConnection {
 
-   /**
-    * A list of Book edges.
-    */
-   public List<BookEdge> edges;
+  /**
+   * A list of Book edges.
+   */
+  private final List<BookEdge> edges;
 
-   /**
-    * Pagination information for the connection.
-    */
-   public PageInfo pageInfo;
+  /**
+   * Pagination information for the connection.
+   */
+  private final PageInfo pageInfo;
 
-   /**
-    * Constructs a new BookConnection instance.
-    *
-    * @param edges a list of Book edges
-    * @param pageInfo pagination information for the connection
-    */
-   public BookConnection(List<BookEdge> edges, PageInfo pageInfo) {
-      this.edges = edges;
-      this.pageInfo = pageInfo;
-   }
+  /**
+   * Constructs a new BookConnection instance.
+   *
+   * @param edges a list of Book edges
+   * @param pageInfo pagination information for the connection
+   */
+  private BookConnection(List<BookEdge> edges, PageInfo pageInfo) {
+    this.edges = edges;
+    this.pageInfo = pageInfo;
+  }
+
+  /**
+   * Creates a new BookConnection instance.
+   *
+   * @param edges a list of Book edges
+   * @param pageInfo pagination information for the connection
+   * @return a new BookConnection instance
+   */
+  public static BookConnection create(List<BookEdge> edges, PageInfo pageInfo) {
+    return new BookConnection(edges, pageInfo);
+  }
+
+  /**
+   * Returns the list of Book edges.
+   *
+   * @return the list of Book edges
+   */
+  public List<BookEdge> getEdges() {
+    return edges;
+  }
+
+  /**
+   * Returns the pagination information for the connection.
+   *
+   * @return the pagination information
+   */
+  public PageInfo getPageInfo() {
+    return pageInfo;
+  }
 }
 ```
 
-### BookEdge
-Ogni BookEdge rappresenta un singolo libro all’interno di una connessione di dati. L’edge è il legame tra il libro e il cursore che ti permette di navigare tra le pagine.
+### Cosè BookEdge
+Ogni `BookEdge` rappresenta un singolo libro all’interno di una connessione di dati. L’edge è il legame tra il libro e il cursore che ti permette di navigare tra le pagine.
 
-I ruoli principali di BookEdge sono:
-* contiene il node, che rappresenta il libro vero e proprio (l’oggetto Book).
-* contiene il cursor, che è un identificatore univoco codificato (solitamente in Base64) che permette di fare paginazione tra le pagine successive.
+I ruoli principali di `BookEdge` sono:
+* contiene il node, che rappresenta il libro vero e proprio (l’oggetto `Book`).
+* contiene il cursor, che **è un identificatore univoco** codificato (solitamente in Base64) che permette di fare paginazione tra le pagine successive.
 
-A seguie un esempio di implementazione di BookEdge che è un Type GraphQL (vedi annotazione `@Type`). Il codice completo è disponibile nel progetto di esempio in [BookEdge.java](src/main/java/it/dontesta/labs/quarkus/graphql/pagination/type/BookEdge.java).
+A seguire un esempio di implementazione di `BookEdge` che è un Type GraphQL (vedi annotazione `@Type`). Il codice completo è disponibile nel progetto di esempio in [BookEdge.java](src/main/java/it/dontesta/labs/quarkus/graphql/pagination/type/BookEdge.java).
 
 ```java
 package it.dontesta.labs.quarkus.graphql.pagination.type;
@@ -544,37 +565,66 @@ import org.eclipse.microprofile.graphql.Type;
 @Type
 public class BookEdge {
 
-    /**
-     * The node of type Book.
-     */
-    public Book node;
+  /**
+   * The node of type Book.
+   */
+  private final Book node;
 
-    /**
-     * The cursor for this edge.
-     */
-    public String cursor;
+  /**
+   * The cursor for this edge.
+   */
+  private final String cursor;
 
-    /**
-     * Constructs a new BookEdge instance.
-     *
-     * @param node the Book node
-     * @param cursor the cursor for this edge
-     */
-    public BookEdge(Book node, String cursor) {
-        this.node = node;
-        this.cursor = cursor;
-    }
+  /**
+   * Constructs a new BookEdge instance.
+   *
+   * @param node the Book node
+   * @param cursor the cursor for this edge
+   */
+  private BookEdge(Book node, String cursor) {
+    this.node = node;
+    this.cursor = cursor;
+  }
+
+  /**
+   * Creates a new BookEdge instance.
+   *
+   * @param node the Book node
+   * @param cursor the cursor for this edge
+   * @return a new BookEdge instance
+   */
+  public static BookEdge create(Book node, String cursor) {
+    return new BookEdge(node, cursor);
+  }
+
+  /**
+   * Returns the Book node.
+   *
+   * @return the Book node
+   */
+  public Book getNode() {
+    return node;
+  }
+
+  /**
+   * Returns the cursor for this edge.
+   *
+   * @return the cursor
+   */
+  public String getCursor() {
+    return cursor;
+  }
 }
 ```
 
-### PageInfo
-L’oggetto PageInfo contiene informazioni cruciali sulla paginazione, come se ci sono altre pagine di dati disponibili e quale sarà il cursore finale per la navigazione alla pagina successiva.
+### Cosè PageInfo
+L’oggetto `PageInfo` contiene informazioni cruciali sulla paginazione, come se ci sono altre pagine di dati disponibili e quale sarà il cursore finale per la navigazione alla pagina successiva.
 
-I ruoli principali di PageInfo sono:
-* hasNextPage: Indica se ci sono ulteriori pagine da caricare. Se la lista di libri contiene un numero inferiore a quello richiesto (es. 10 libri su 20), questo campo sarà true, indicando che ci sono più pagine disponibili.
-* endCursor: È il cursore dell’ultimo elemento nella lista corrente, che puoi usare come after nelle query successive per ottenere la pagina successiva.
+I ruoli principali di `PageInfo` sono:
+* hasNextPage: indica se ci sono ulteriori pagine da caricare. Se la lista di libri contiene un numero inferiore a quello richiesto (es. 10 libri su 20), questo campo sarà true, indicando che ci sono più pagine disponibili.
+* endCursor: è il cursore dell’ultimo elemento nella lista corrente, che puoi usare come after nelle query successive per ottenere la pagina successiva.
 
-A seguire un esempio di implementazione di PageInfo che è un Type GraphQL (vedi annotazione `@Type`). Il codice completo è disponibile nel progetto di esempio in [PageInfo.java](src/main/java/it/dontesta/labs/quarkus/graphql/pagination/type/PageInfo.java).
+A seguire un esempio di implementazione di `PageInfo` che è un Type GraphQL (vedi annotazione `@Type`). Il codice completo è disponibile nel progetto di esempio in [PageInfo.java](src/main/java/it/dontesta/labs/quarkus/graphql/pagination/type/PageInfo.java).
 
 ```java
 package it.dontesta.labs.quarkus.graphql.pagination.type;
@@ -582,39 +632,68 @@ package it.dontesta.labs.quarkus.graphql.pagination.type;
 import org.eclipse.microprofile.graphql.Type;
 
 /**
- * Represents pagination information for GraphQL queries.
+ * Represents pagination information for a connection.
  */
 @Type
 public class PageInfo {
 
-    /**
-     * Indicates if there is a next page available.
-     */
-    public boolean hasNextPage;
+  /**
+   * Indicates if there is a next page.
+   */
+  private final boolean hasNextPage;
 
-    /**
-     * The cursor to the end of the current page.
-     */
-    public String endCursor;
+  /**
+   * The end cursor for the current page.
+   */
+  private final String endCursor;
 
-    /**
-     * Constructs a new PageInfo instance.
-     *
-     * @param hasNextPage indicates if there is a next page available
-     * @param endCursor the cursor to the end of the current page
-     */
-    public PageInfo(boolean hasNextPage, String endCursor) {
-        this.hasNextPage = hasNextPage;
-        this.endCursor = endCursor;
-    }
+  /**
+   * Constructs a new PageInfo instance.
+   *
+   * @param hasNextPage indicates if there is a next page
+   * @param endCursor the end cursor for the current page
+   */
+  private PageInfo(boolean hasNextPage, String endCursor) {
+    this.hasNextPage = hasNextPage;
+    this.endCursor = endCursor;
+  }
+
+  /**
+   * Creates a new PageInfo instance.
+   *
+   * @param hasNextPage indicates if there is a next page
+   * @param endCursor the end cursor for the current page
+   * @return a new PageInfo instance
+   */
+  public static PageInfo create(boolean hasNextPage, String endCursor) {
+    return new PageInfo(hasNextPage, endCursor);
+  }
+
+  /**
+   * Returns if there is a next page.
+   *
+   * @return true if there is a next page, false otherwise
+   */
+  public boolean isHasNextPage() {
+    return hasNextPage;
+  }
+
+  /**
+   * Returns the end cursor for the current page.
+   *
+   * @return the end cursor
+   */
+  public String getEndCursor() {
+    return endCursor;
+  }
 }
 ```
 
 ### Come funzionano insieme BookConnection, BookEdge e PageInfo?
 
-1. BookConnection: È il punto centrale della risposta, che contiene sia i BookEdge (gli elementi reali) sia le informazioni di paginazione attraverso l’oggetto PageInfo.
-2. BookEdge: Ogni edge contiene il libro stesso (l’oggetto Book) e un cursore univoco che consente di navigare attraverso le pagine.
-3. PageInfo: Fornisce informazioni critiche per il cliente, come se esistono pagine successive e quale cursore usare per la pagina successiva.
+1. BookConnection: è il punto centrale della risposta, che contiene sia i `BookEdge` (gli elementi reali) sia le informazioni di paginazione attraverso l’oggetto `PageInfo`.
+2. BookEdge: ogni edge contiene il libro stesso (l’oggetto `Book`) e un cursore univoco che consente di navigare attraverso le pagine.
+3. PageInfo: fornisce informazioni critiche per il cliente, come se esistono pagine successive e quale cursore usare per la pagina successiva.
 
 ### Modifica al resolver BookGraphQLResource
 Per implementare la paginazione con cursori, dobbiamo apportare alcune modifiche al resolver `BookGraphQLResource`. In particolare, dobbiamo aggiungere un nuovo metodo `books` che accetti i parametri di paginazione come `first` (per il numero di libri da recuperare) e `after` (per il cursore dell’elemento precedente). Fatto ciò, utilizzare Panache per recuperare i libri in modo paginato e restituire una lista di `BookEdge` con i relativi cursori.
@@ -623,47 +702,46 @@ A seguire l'implementazione del metodo `books` che accetta i parametri di pagina
 
 ```java
     /**
-     * Retrieves a paginated list of books.
-     *
-     * @param first the number of books to retrieve
-     * @param after the cursor after which to start retrieving books
-     * @return a BookConnection containing the list of books and pagination information
-     * @throws GraphQLException if an error occurs during retrieval
-     */
-    @Query
-    public BookConnection books(@Name("first") int first,
-            @NotEmpty @NotNull @Name("after") String after)
-            throws GraphQLException {
-        int startIndex = 0;
+ * Retrieves a paginated list of books.
+ *
+ * @param first the number of books to retrieve
+ * @param after the cursor after which to start retrieving books
+ * @return a BookConnection containing the list of books and pagination information
+ * @throws GraphQLException if an error occurs during retrieval
+ */
+@Query
+public BookConnection books(@Name("first") int first,
+                            @NotEmpty @NotNull @Name("after") String after)
+    throws GraphQLException {
 
-        // Decode the cursor to get the start index
-        if (after != null) {
-            try {
-                String decoded = new String(Base64.getDecoder().decode(after));
-                startIndex = Integer.parseInt(decoded) + 1;
-            } catch (IllegalArgumentException e) {
-                throw new GraphQLException("Invalid cursor format", e);
-            }
-        }
+  int startIndex;
 
-        // Query Panache to get the books
-        PanacheQuery<Book> query = Book.findAll();
-        List<Book> books = query.range(startIndex, startIndex + first - 1).list();
+  // Decode the cursor to get the start index
+  try {
+    String decoded = new String(Base64.getDecoder().decode(after));
+    startIndex = Integer.parseInt(decoded) + 1;
+  } catch (IllegalArgumentException e) {
+    throw new GraphQLException("Invalid cursor format", e);
+  }
 
-        // Create the edges response with the cursor
-        List<BookEdge> edges = books.stream()
-                .map(book -> {
-                    String cursor = Base64.getEncoder().encodeToString(String.valueOf(book.id).getBytes());
-                    return new BookEdge(book, cursor);
-                })
-                .toList();
+  // Query Panache to get the books
+  PanacheQuery<Book> query = Book.findAll();
+  List<Book> books = query.range(startIndex, startIndex + first - 1).list();
 
-        // Check if there are more pages
-        String endCursor = edges.isEmpty() ? null : edges.get(edges.size() - 1).cursor;
-        boolean hasNextPage = (startIndex + first) < query.count();
+  // Create the edges response with the cursor
+  List<BookEdge> edges = books.stream()
+      .map(book -> {
+        String cursor = Base64.getEncoder().encodeToString(String.valueOf(book.id).getBytes());
+        return BookEdge.create(book, cursor);
+      })
+      .toList();
 
-        return new BookConnection(edges, new PageInfo(hasNextPage, endCursor));
-    }
+  // Check if there are more pages
+  String endCursor = edges.isEmpty() ? null : edges.get(edges.size() - 1).getCursor();
+  boolean hasNextPage = (startIndex + first) < query.count();
+
+  return BookConnection.create(edges, PageInfo.create(hasNextPage, endCursor));
+}
 ```
 
 Usando il metodo `range(startIndex, startIndex + first - 1)` di Panache, possiamo recuperare i libri in modo paginato. Aggiungiamo i cursori (codificati in Base64) per ciascun libro e restituiamo una lista di `BookEdge` insieme alle informazioni di paginazione. Come ultimo passaggio, verifichiamo se ci sono altre pagine disponibili e restituiamo una `BookConnection` con i libri e le informazioni di paginazione.
@@ -795,6 +873,20 @@ L'output a seguire mostra invece la query per recuperare la pagina successiva di
   }
 }
 ```
+
+## Accesso alla console di MinIO
+Quando avviate l'applicazione in modalità Dev, possiamo accedere alla console di MinIO per caricare e scaricare file o semplicemente per verificare
+lo stato dell'Object Store. Per accedere alla console di MinIO, apri il browser e visita l'URL: <http://localhost:8080/q/dev-ui/extensions> identificando il box denominato Minio Client extension e dal li accedere alla console.
+
+![Console di MinIO](src/main/docs/resources/images/box-ui-accesso-minio-console.jpg)
+
+Figura 3 - Minio Client extension per accesso alla Console di MinIO
+
+La figura a seguire mostra la console di MinIO, dove puoi caricare e scaricare file, creare e eliminare bucket e visualizzare le informazioni sull'Object Store.
+
+![Console di MinIO](src/main/docs/resources/images/view-bucket-minio-dev.jpg)
+
+Figura 4 - Console di MinIO
 
 ## Creazione dell'artefatto ed eseguire l’applicazione
 
