@@ -66,7 +66,7 @@ Figura 1 - Stratificazione dell'applicazione Quarkus GraphQL
 * Schema GraphQL definito con tipi, query e mutation.
 * Integrazione della paginazione con GraphQL.
 * Esempi di query per recuperare libri e autori.
-* Esempi di mutation per creare, aggiornare ed eliminare libri e autori.
+* Esempi di mutation per creare, aggiornare ed eliminare libri, autori ed editori.
 * Storage delle copertine dei libri su MinIO, sia in sviluppo (con Dev Services) che in produzione
 * Test di esempio.
 
