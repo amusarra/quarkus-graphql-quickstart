@@ -5,12 +5,16 @@
 package it.dontesta.labs.quarkus.graphql.ws.graphql.api;
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.smallrye.graphql.api.Subscription;
+import io.smallrye.mutiny.Multi;
+import io.smallrye.mutiny.operators.multi.processors.BroadcastProcessor;
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Author;
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Book;
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Editor;
 import it.dontesta.labs.quarkus.graphql.pagination.type.BookConnection;
 import it.dontesta.labs.quarkus.graphql.pagination.type.BookEdge;
 import it.dontesta.labs.quarkus.graphql.pagination.type.PageInfo;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -23,6 +27,7 @@ import org.eclipse.microprofile.graphql.*;
 import java.util.List;
 
 @GraphQLApi
+@ApplicationScoped
 public class BookGraphQL {
 
     @Inject
@@ -104,11 +109,17 @@ public class BookGraphQL {
     @Description("Create a new book")
     @Transactional
     public Book createBook(Book book) throws GraphQLException {
+
+        // Handle the editor and authors
         handleEditor(book);
         handleAuthors(book);
 
+        // Persist the book and flush to get the ID
         entityManager.persist(book);
         entityManager.flush();
+
+        // Notify subscribers
+        processor.onNext(book);
 
         return book;
     }
@@ -133,6 +144,16 @@ public class BookGraphQL {
         List<Author> authors = Author.list("id in ?1", authorIds);
         book.authors.addAll(authors);
         return book;
+    }
+
+    /**
+     * Subscription method to notify subscribers when a new book is created.
+     *
+     * @return a Multi stream of Book objects representing the created books
+     */
+    @Subscription
+    public Multi<Book> bookCreated() {
+        return processor;
     }
 
     /**
@@ -174,4 +195,7 @@ public class BookGraphQL {
             }
         }
     }
+
+    // Broadcast processor to notify subscribers
+    private final BroadcastProcessor<Book> processor = BroadcastProcessor.create();
 }
