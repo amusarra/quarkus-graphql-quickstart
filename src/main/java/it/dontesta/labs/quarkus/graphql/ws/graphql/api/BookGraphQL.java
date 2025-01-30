@@ -99,7 +99,7 @@ public class BookGraphQL {
     }
 
     /**
-     * Creates a new book.
+     * Creates a new book and notifies subscribers.
      *
      * @param book the book to create
      * @return the created book

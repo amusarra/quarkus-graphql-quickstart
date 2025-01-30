@@ -875,6 +875,134 @@ L'output a seguire mostra invece la query per recuperare la pagina successiva di
 }
 ```
 
+## Subscriptions con GraphQL
+Le [Subscription in GraphQL](https://graphql.org/learn/subscriptions/) permettono di ricevere aggiornamenti in tempo reale ogni volta che si verifica un determinato evento nel server. A differenza delle query e delle mutation, che sono richieste singole, le subscription mantengono una connessione aperta e inviano dati al client ogni volta che l’evento monitorato si verifica.
+
+GraphQL utilizza il protocollo [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) per gestire le subscription, consentendo al server di inviare aggiornamenti in [push](https://it.wikipedia.org/wiki/Notifica_push) al client senza che questo debba effettuare richieste ripetute ([polling](https://it.wikipedia.org/wiki/Polling_(informatica))). Questo è particolarmente utile per applicazioni in tempo reale, come chat, feed di notizie, dashboard di monitoraggio e molto altro.
+
+**Come Funzionano le Subscription?**
+1. Il client esegue una **subscription** specificando quale tipo di evento vuole monitorare.
+2. Il server mantiene aperta la connessione WebSocket.
+3. Ogni volta che un evento rilevante si verifica (es. creazione di un nuovo libro), il server invia i dati aggiornati al client in tempo reale.
+
+In Quarkus, puoi implementare le subscription con SmallRye GraphQL, che supporta WebSocket per la comunicazione in tempo reale. Per implementare le subscription nel mondo più semplice possibile, agiremo direttamente sul resolver GraphQL `BookGraphQL` per inviare aggiornamenti in tempo reale ogni volta che viene creato un nuovo libro.
+
+### Implementazione delle Subscription
+Per implementare le subscription, dobbiamo seguire questi passaggi:
+1. aggiungere un bookProcessor: un BroadcastProcessor di Munity che notifica i client quando viene creato un nuovo libro;
+2. modificare il metodo `createBook` per inviare un evento di creazione del libro al bookProcessor;
+3. creare un metodo `bookCreated` che restituisce un Publisher per ricevere gli aggiornamenti in tempo reale.
+
+A seguire l'implementazione dei passaggi sopra descritti. Il codice completo è disponibile nel progetto di esempio in [BookGraphQL.java](src/main/java/it/dontesta/labs/quarkus/graphql/ws/graphql/api/BookGraphQL.java).
+
+```java
+    // Broadcast processor to notify subscribers
+    private final BroadcastProcessor<Book> processor = BroadcastProcessor.create();
+
+    /**
+     * Creates a new book and notifies subscribers.
+     *
+     * @param book the book to create
+     * @return the created book
+     * @throws GraphQLException if an error occurs during creation
+     */
+    @Mutation
+    @Description("Create a new book")
+    @Transactional
+    public Book createBook(Book book) throws GraphQLException {
+
+        // Handle the editor and authors
+        handleEditor(book);
+        handleAuthors(book);
+
+        // Persist the book and flush to get the ID
+        entityManager.persist(book);
+        entityManager.flush();
+
+        // Notify subscribers
+        processor.onNext(book);
+
+        return book;
+    }
+
+    /**
+     * Subscription method to notify subscribers when a new book is created.
+     *
+     * @return a Multi stream of Book objects representing the created books
+     */
+    @Subscription
+    public Multi<Book> bookCreated() {
+      return processor;
+    }
+```
+
+Dopo aver creato un nuovo libro, inviamo l’evento di creazione del libro al `processor` utilizzando `processor.onNext(book)`. Questo notifica i client che si sono sottoscritti alla subscription `bookCreated` ogni volta che viene creato un nuovo libro. Il metodo `bookCreated` restituisce un `Multi` stream di libri, che rappresenta i libri creati in tempo reale.
+
+### Test delle Subscription
+Per testare le subscription, possiamo utilizzare un client WebSocket come [GraphiQL](http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-ui) o [Apollo Client](https://www.apollographql.com/docs/react/get-started/). In questo esempio, utilizzeremo GraphiQL per testare le subscription visto che è già integrato in SmallRye GraphQL.
+
+Per testare le subscription, esegui i seguenti passaggi:
+1. avvio dell'applicazione in modalità Dev con il comando `./mvnw quarkus:dev` o `quarkus dev`;
+2. avvio di GraphiQL visitando l'URL [http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-ui](http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-ui);
+3. esecuzione della query di subscription `bookCreated` per ricevere gli aggiornamenti in tempo reale.
+4. creazione di un nuovo libro utilizzando la mutation `createBook` e verifica che GraphiQL riceva l'aggiornamento in tempo reale.
+
+La query di subscription `bookCreated` è simile a quella riportata di seguito:
+
+```graphql
+subscription ListenForNewBook {
+  bookCreated {
+    id
+    title
+    subTitle
+    authors {
+      firstName
+      lastName
+    }
+  }
+}
+```
+
+Una volta eseguita la query di subscription, GraphiQL rimarrà in attesa di aggiornamenti in tempo reale. Ogni volta che viene creato un nuovo libro, GraphiQL riceverà l’aggiornamento in tempo reale con i dettagli del libro.
+
+Con cURL inviamo una mutation per creare un nuovo libro:
+
+```shell
+curl -X POST http://localhost:8080/api/graphql \
+     -H "Content-Type: application/json" \
+     -d '{
+       "query": "
+         mutation createBook {
+           createBook(
+             book: {
+               title: \"Libro delle Subscription GraphQL\",
+               subTitle: \"Creato con Quarkus + GraphQL\",
+               isbn: \"7650986575646\",
+               pages: 567,
+               summary: \"Summary of the book\",
+               publication: \"2025-01-28\",
+               genre: \"fantasy\",
+               languages: [\"IT\"],
+               formats: [\"EPUB\", \"PDF\"],
+               keywords: [\"key1\"],
+               authors: [{ id: 5 }],
+               editor: { id: 5 }
+             }
+           ) {
+             id
+             title
+           }
+         }
+       "
+     }'
+```
+
+Una volta eseguita la mutation, GraphiQL riceverà l’aggiornamento in tempo reale con i dettagli del libro creato. A seguire una demo che mostra come testare le subscription con GraphiQL.
+
+![Demo Subscription con GraphiQL](src/main/docs/resources/images/demo-subscription-graphql.mp4)
+
+Dalla demo è evidente che GraphiQL riceve l’aggiornamento in tempo reale tramite WebSocket ogni volta che viene creato un nuovo libro. Questo dimostra come le subscription in GraphQL siano utili per ricevere aggiornamenti in tempo reale senza dover effettuare richieste ripetute.
+
 ## Accesso alla console di MinIO
 Quando avviate l'applicazione in modalità Dev, possiamo accedere alla console di MinIO per caricare e scaricare file o semplicemente per verificare
 lo stato dell'Object Store. Per accedere alla console di MinIO, apri il browser e visita l'URL: <http://localhost:8080/q/dev-ui/extensions> identificando il box denominato Minio Client extension e dal li accedere alla console.
