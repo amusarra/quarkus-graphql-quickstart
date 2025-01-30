@@ -999,7 +999,7 @@ curl -X POST http://localhost:8080/api/graphql \
 
 Una volta eseguita la mutation, GraphiQL riceverà l’aggiornamento in tempo reale con i dettagli del libro creato. A seguire una demo che mostra come testare le subscription con GraphiQL.
 
-![Demo Subscription con GraphiQL](src/main/docs/resources/images/demo-subscription-graphql.mp4)
+![Demo Subscription con GraphiQL](src/main/docs/resources/images/demo-subscription-graphql.gif)
 
 Dalla demo è evidente che GraphiQL riceve l’aggiornamento in tempo reale tramite WebSocket ogni volta che viene creato un nuovo libro. Questo dimostra come le subscription in GraphQL siano utili per ricevere aggiornamenti in tempo reale senza dover effettuare richieste ripetute.
 
