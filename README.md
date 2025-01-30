@@ -1069,6 +1069,33 @@ Dopo la creazione, puoi eseguire il tuo eseguibile nativo con:
 
 Per maggiori informazioni sulla creazione di eseguibili nativi, consulta la guida ufficiale: https://quarkus.io/guides/maven-tooling.
 
+## Esecuzione dell'applicazione via Docker Compose e Podman Compose
+Le immagini container dell'applicazione sono create tramite due GitHub action che sono definite nei file: `docker_publish.yml` e `docker_publish_native_amd64.yml` all'interno del progetto, directory `.github/workflows`.
+
+Le immagini create sono disponibili su Docker Hub al seguente link https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart/tags. 
+
+Per costruire l'immagine container JVM mode, il Dockerfile di riferimento è `Dockerfile.jvm` (in `src/main/docker/Dockerfile.jvm`) e per l'immagine container Native mode, il Dockerfile di riferimento è `Dockerfile.native` (in `src/main/docker/Dockerfile.native`).
+
+Il file [docker-compose.yml](src/main/docker/docker-compose.yml) è stato creato per eseguire l'applicazione in modalità container. Per eseguire l'applicazione in modalità container, esegui il comando:
+
+```shell
+# Esportazione di APP_KEYSTORE_PATH per montare il keystore all'interno del container
+# e abilitare il protocollo HTTPS
+export APP_KEYSTORE_PATH=$(pwd)/src/main/resources/app-keystore.p12
+
+# Avvio dell'applicazione via Podman Compose
+# Il comando deve essere eseguito dalla root directory del progetto
+podman compose -f src/main/docker/docker-compose.yml up
+
+# Avvio dell'applicazione via Docker Compose
+# Il comando deve essere eseguito dalla root directory del progetto
+docker-compose -f src/main/docker/docker-compose.yml up
+
+# Da Docker Compose V2, il compose è stato integrato direttamente in Docker
+# per cui è possibile eseguire il comando seguente.
+docker compose -f src/main/docker/docker-compose.yml up
+```
+
 ## Guida ai servizi e alle estensioni utilizzate
 
 - ArC ([guide](https://quarkus.io/guides/cdi-reference)): Build time CDI dependency injection
