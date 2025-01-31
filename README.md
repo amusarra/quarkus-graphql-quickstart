@@ -1096,6 +1096,15 @@ docker-compose -f src/main/docker/docker-compose.yml up
 docker compose -f src/main/docker/docker-compose.yml up
 ```
 
+Una volta che lo stack dei servizi configurati in `docker-compose.yml` è stato avviato, l'applicazione sarà disponibile all'indirizzo: [http://localhost:8080](http://localhost:8080) e [https://localhost:8443](https://localhost:8443). Il database PostgreSQL è disponibile sulla porta standard 5432, mentre MinIO è disponibile sulla porta 9090. Puoi vedere lo stato dello stack dei servizi eseguendo il comando `docker ps` o `podman ps`. A seguire un esempio di output del comando.
+
+```shell
+CONTAINER ID  IMAGE                                                 COMMAND               CREATED       STATUS        PORTS                                                                   NAMES
+35d4f6504190  quay.io/minio/minio:latest                            server /data --co...  24 hours ago  Up 5 seconds  0.0.0.0:9000-9001->9000-9001/tcp                                        minio-storage
+d0311857c285  docker.io/library/postgres:16                         postgres              24 hours ago  Up 5 seconds  0.0.0.0:5432->5432/tcp                                                  postgres-db
+386fdad9f4cb  docker.io/amusarra/quarkus-graphql-quickstart:latest                        24 hours ago  Up 5 seconds  0.0.0.0:8080->8080/tcp, 0.0.0.0:8443->8443/tcp, 0.0.0.0:9090->9090/tcp  quarkus-graphql
+```
+
 ## Guida ai servizi e alle estensioni utilizzate
 
 - ArC ([guide](https://quarkus.io/guides/cdi-reference)): Build time CDI dependency injection
