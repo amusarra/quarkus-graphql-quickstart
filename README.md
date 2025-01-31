@@ -1,4 +1,4 @@
-# Quarkus GraphQL Quickstart + MinIO come Object Store S3
+# Quarkus GraphQL Quickstart + MinIO as Object Store S3
 
 [![Keep a Changelog v1.1.0 badge](https://img.shields.io/badge/changelog-Keep%20a%20Changelog%20v1.1.0-%23E05735)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
