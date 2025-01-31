@@ -7,30 +7,31 @@
 ![CI Docker build](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish.yml/badge.svg)
 ![CI Docker build native amd64](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish_native_amd64.yml/badge.svg)
 
-This project is a demonstration of a Quarkus application that exposes data through a traditional RESTful API (`quarkus-rest`) and a GraphQL API (`quarkus-smallrye-graphql`). The project uses Hibernate ORM with Panache (`quarkus-hibernate-orm-panache`) for data persistence and includes configurations for H2 database (for development), PostgreSQL (for production profiles), and MinIO as an S3 Object Store (`io.quarkiverse.minio:quarkus-minio`).
+Questo progetto è una dimostrazione di un’applicazione Quarkus che espone dati attraverso una API RESTful (`quarkus-rest`) tradizionale e una API GraphQL (`quarkus-smallrye-graphql`). Il progetto utilizza Hibernate ORM con Panache (`quarkus-hibernate-orm-panache`) per la persistenza dei dati e include configurazioni per database H2 (per sviluppo), PostgreSQL (per profili di produzione) e MinIO come Object Store S3 (`io.quarkiverse.minio:quarkus-minio`).
 
-[MinIO](https://min.io/) is a high-performance, distributed object storage server compatible with Amazon S3, easily integrable with Quarkus via the `quarkus-minio` extension and DevServices.
+[MinIO](https://min.io/) è un server di storage degli oggetti ad alte prestazioni, distribuito e compatibile con Amazon S3 facilmente integrabile con Quarkus per via dell'estensione `quarkus-minio` e dei DevService.
 
-[GraphQL](https://graphql.org/) is a query language for APIs that allows clients to request exactly the data they need, avoiding over-fetching or under-fetching. Unlike REST APIs, it offers a single endpoint through which the client can obtain data structured according to their needs.
+[GraphQL](https://graphql.org/) è un linguaggio di query per API che consente ai client di richiedere esattamente i dati necessari, evitando over-fetching o under-fetching. A differenza delle API REST, offre un singolo endpoint attraverso il quale il client può ottenere dati strutturati in base alle proprie esigenze.
 
-Main advantages over custom APIs:
-1. Flexibility: The client decides which data to obtain, reducing unnecessary payloads.
-2. Performance: Fewer calls, thanks to data aggregation from multiple sources in a single query.
-3. Evolvability: Backend changes can be introduced without breaking existing queries.
-4. Standardization: Using GraphQL reduces the need to design custom APIs, simplifying development and maintenance.
+Vantaggi principali rispetto alle API custom:
+1. Flessibilità: Il client decide quali dati ottenere, riducendo payload inutili.
+2. Performance: Minore numero di chiamate, grazie all’aggregazione di dati da più fonti in una singola query.
+3. Evolvibilità: Cambiamenti al backend possono essere introdotti senza rompere le query esistenti.
+4. Standardizzazione: L’uso di GraphQL riduce la necessità di progettare API ad hoc, semplificando sviluppo e manutenzione.
 
-This approach improves user experience and accelerates the development of client and server applications.
+Questo approccio migliora la user experience e accelera lo sviluppo di applicazioni client e server.
 
-| **Pros**                                                                            | **Cons**                                                                                |
+| **Pro**                                                                            | **Contro**                                                                                |
 |------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
-| **Customized requests**: clients get only the data they need.                      | **Initial complexity**: requires a steeper learning curve compared to REST.               |
-| **Single Endpoint**: a single access point for all queries and mutations.          | **More complex caching**: less intuitive compared to REST (which uses unique URLs).       |
-| **Data aggregation**: allows combining data from multiple sources in one call.     | **Server overhead**: complex queries can overload the server if not well managed.         |
-| **Evolvability**: fields can be deprecated without breaking the client.            | **Debugging tools**: less common compared to those for REST.                              |
-| **Integrated documentation**: the schema serves as documentation for the APIs.     | **Complex authorizations**: more intricate permission management for dynamic queries.     |
-| **Reduced calls**: optimizes client-server communications.                         | **Initial setup**: requires more configuration and tools compared to REST.                |
+| **Richieste personalizzate**: i client ottengono solo i dati di cui hanno bisogno. | **Complessità iniziale**: richiede una curva di apprendimento maggiore rispetto a REST.   |
+| **Single Endpoint**: un unico punto di accesso per tutte le query e mutazioni.     | **Caching più complesso**: meno intuitivo rispetto a REST (che sfrutta URL univoci).      |
+| **Aggregazione dei dati**: consente di unire dati da più fonti in una chiamata.    | **Overhead server**: query complesse possono sovraccaricare il server se non ben gestite. |
+| **Evolvibilità**: i campi possono essere deprecati senza interrompere il client.   | **Strumenti di debugging**: meno diffusi rispetto a quelli per REST.                      |
+| **Documentazione integrata**: lo schema funge da documentazione per le API.        | **Autorizzazioni complesse**: gestione dei permessi più articolata per query dinamiche.   |
+| **Riduzione delle chiamate**: ottimizza le comunicazioni client-server.            | **Setup iniziale**: richiede più configurazione e strumenti rispetto a REST.              |
 
-> Note: This project has an educational and demonstrative approach. There are intentionally incomplete parts of the code with comments to guide the user in completing the implementation. For example:
+> **Nota**: Questo progetto ha un approccio educativo e dimostrativo. Volutamente ci sono parti di codice non complete
+>ma con commenti per guidare l'utente a completare l'implementazione. Per esempio:
 > ```java
 >    @Mutation
 >    @Description("Create a new author")
@@ -44,62 +45,65 @@ This approach improves user experience and accelerates the development of client
 >    }
 >```
 
-The project follows the classic three-layer architecture.
+Il progetto segue la classica architettura a tre strati.
 
-* Persistence Layer (ORM/Panache): uses Hibernate ORM with Panache for managing and persisting data in the database.
-* Service/API Layer (GraphQL and REST): exposes data through GraphQL APIs and REST APIs, providing an interface for interactions.
-* Presentation Layer (Optional): the project does not include a dedicated user interface layer.
+* Strato di Persistenza (ORM/Panache): utilizza Hibernate ORM con Panache per la gestione e la persistenza
+  dei dati nel database.
+* Strato di Servizio/API (GraphQL e REST): espone i dati attraverso API GraphQL e API REST, fornendo
+  un’interfaccia per le interazioni.
+* Strato di Presentazione (Opzionale): il progetto non include un livello di interfaccia utente dedicato.
 
-The diagram below highlights the layering of the application.
+Il diagramma mostrato a seguire evidenzia la stratificazione dell’applicazione.
 
 ![Stratificazione dell'applicazione](src/main/docs/resources/images/architettura-applicazione-quarkus-graphql-1.webp)
 
-Figure 1 - Layering of the Quarkus GraphQL application
+Figura 1 - Stratificazione dell'applicazione Quarkus GraphQL
 
-## Features
+## Caratteristiche
 
-* Implementation of a GraphQL API with Quarkus.
-* Use of Panache for data persistence with Hibernate ORM.
-* GraphQL schema defined with types, queries, and mutations.
-* Integration of pagination with GraphQL.
-* Example queries to retrieve books and authors.
-* Example mutations to create, update, and delete books, authors, and publishers.
-* Storage of book covers on MinIO, both in development (with Dev Services) and in production.
-* Example tests.
+* Implementazione di un'API GraphQL con Quarkus.
+* Utilizzo di Panache per la persistenza dei dati con Hibernate ORM.
+* Schema GraphQL definito con tipi, query e mutation.
+* Integrazione della paginazione con GraphQL.
+* Esempi di query per recuperare libri e autori.
+* Esempi di mutation per creare, aggiornare ed eliminare libri, autori ed editori.
+* Storage delle copertine dei libri su MinIO, sia in sviluppo (con Dev Services) che in produzione
+* Test di esempio.
 
-Below are the main endpoints of the application.
+A seguire sono riportati i principali endpoint dell'applicazione.
 
-| Endpoint       | Type    | Description                                                              |
+| Endpoint       | Tipo    | Descrizione                                                              |
 |----------------|---------|--------------------------------------------------------------------------|
-| `/api/graphql` | GraphQL | Endpoint for the GraphQL API                                             |
-| `/api/books`   | REST    | Endpoint for the REST API                                                |
-| `/api/s3/files`| REST    | Endpoint for the REST API for uploading and downloading files to MinIO   |
-| `/q/dev-ui/io.quarkus.quarkus-smallrye-openapi/schema-yaml` | Schema  | Endpoint for the OpenAPI schema in YAML format      |
-| `/q/dev-ui/io.quarkus.quarkus-smallrye-openapi/schema-json` | Schema  | Endpoint for the OpenAPI schema in JSON format      |
-| `/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-schema` | Schema  | Endpoint for the GraphQL schema                      |
+| `/api/graphql` | GraphQL | Endpoint per l'API GraphQL                                               |
+| `/api/books`   | REST    | Endpoint per l'API REST                                                  |
+| `/api/s3/files`| REST    | Endpoint per l'API REST per il caricamento e il download di file su MinIO |
+| `/q/dev-ui/io.quarkus.quarkus-smallrye-openapi/schema-yaml` | Schema  | Endpoint dello schema OpenAPI in formato YAML      |
+| `/q/dev-ui/io.quarkus.quarkus-smallrye-openapi/schema-json` | Schema  | Endpoint dello schema OpenAPI in formato JSON      |
+| `/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-schema` | Schema  | Endpoint dello schema GraphQL                      |
 
-Table 1 - Main endpoints of the Quarkus GraphQL application
+Tabella 1 - Endpoint principali dell'applicazione Quarkus GraphQL
 
-## Requirements
+## Requisiti
 
-To run or develop the project, make sure you have the following tools installed.
+Per eseguire o sviluppare il progetto, assicurati di avere installati i seguenti strumenti.
 
 * Git 2.33+
-* JDK 21+, GraalVM 21+ (for native build)
-* Container tools like Docker or Podman
-* Apache Maven 3.9.9 (optional if using the Maven wrapper integrated with the sample project)
-* Quarkus CLI 3.17 (optional, but recommended)
+* JDK 21+, GraalVM 21+ (per la build nativa)
+* tool per i container come Docker o Podman
+* Apache Maven 3.9.9 (opzionale nel caso di uso del wrapper Maven integrato con il progetto di esempio);
+* Quarkus CLI 3.17 (opzionale, ma consigliato)
 
 ## Quickstart
 
-To launch the project in development (or dev) mode and test the GraphQL and REST functionalities, follow these steps:
+Per lanciare il progetto in modalità sviluppo (o dev) e testare le funzionalità GraphQL e REST, devi seguire i seguenti
+passaggi:
 
-1. Clone the project's git repository;
-2. Start the application in development mode;
-3. Test the GraphQL and REST APIs.
-4. Test the MinIO APIs for file upload and download.
+1. clonazione del repository git del progetto;
+2. avvio dell'applicazione in modalità sviluppo;
+3. test delle API GraphQL e REST.
+4. test delle API MinIO per il caricamento e il download di file.
 
-To clone the project's git repository, run the command:
+Per clonare il repository git del progetto, esegui il comando:
 
 ```shell
 # Clona il repository git del progetto
@@ -120,8 +124,10 @@ Per avviare l'applicazione in modalità sviluppo, esegui il comando:
 quarkus dev
 ```
 
-> **Note**: Before starting the application in dev mode, make sure you have correctly installed and configured Docker or Podman on your system. In case of incorrect configuration or lack of Docker or Podman, the application will not start correctly and you may encounter errors like those reported below:
-> 
+> **Nota**: Prima di avviare l'applicazione in modalità dev, assicurati di aver installato e configurato correttamente
+> Docker o Podman sul tuo sistema. Nel caso di errata configurazione o mancanza di Docker o Podman, l'applicazione
+> non sarà avviata correttamente e potresti riscontrare errori come quelli riportati di seguito:
+>
 > ```shell
 > 2025-01-29 09:33:31,911 WARN  [org.tes.doc.DockerClientProviderStrategy] (build-26) DOCKER_HOST unix:///var/run/docker.sock is not listening: java.io.IOException: com.sun.jna.LastErrorException: [61] Connection refused
 > 2025-01-29 09:33:31,929 ERROR [org.tes.doc.DockerClientProviderStrategy] (build-26) Could not find a valid Docker environment. Please check configuration. Attempted configurations were:
@@ -131,18 +137,19 @@ quarkus dev
 > 2025-01-29 09:33:31,971 INFO  [org.tes.DockerClientFactory] (build-26) Testcontainers version: 1.20.4 
 > ```
 
-To test the GraphQL and REST APIs, open your browser and visit the following URLs:
+Per testare le API GraphQL e REST, apri il browser e visita i seguenti URL:
 
-* GraphQL API using the GraphiQL UI: <http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-ui>
-* REST API using the Swagger UI: <http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-openapi/swagger-ui>
+* API GraphQL usando la UI GraphiQL: <http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-ui>
+* API REST usando la Swagger UI: <http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-openapi/swagger-ui>
 
-Using the [GraphiQL UI](https://github.com/graphql/graphiql), you can execute queries and [mutations](https://graphql.org/learn/mutations/) to retrieve and modify database data. Below is a demo example of how to execute GraphQL queries to retrieve and create books, authors, and publishers, as well as create and retrieve S3 objects from the MinIO Object Store.
+Tramite la UI [GraphiQL](https://github.com/graphql/graphiql), puoi eseguire query e [mutation](https://graphql.org/learn/mutations/) per recuperare e modificare i dati del database. A seguire è riportata una demo di esempio su come eseguire query GraphQL per recuperare e creare libri, autori ed editori
+oltre a creare recuperare oggetti S3 dall'Object Store MinIO.
 
 ![Demo di esempio su come eseguire query GraphQL](src/main/docs/resources/images/demo-graphql-ui.gif)
 
-Animation 1 - Example demo on how to execute GraphQL queries
+Animazione 1 - Demo di esempio su come eseguire query GraphQL
 
-Below are the example queries used in the demo:
+A seguire le query di esempio utilizzate nella demo:
 
 ```graphql
 # Get all Books
@@ -280,7 +287,7 @@ query getFile {
 }
 ```
 
-You can also test GraphQL queries and mutations using cURL, Postman, or any other HTTP client. Below is an example of a GraphQL query to retrieve all books:
+Puoi eseguire il test delle query e mutation GraphQL anche tramite cURL, Postman o qualsiasi altro client HTTP. A seguire un esempio di query GraphQL per recuperare tutti i libri:
 
 ```shell
 curl -k -X POST http://localhost:8080/api/graphql \
@@ -307,7 +314,7 @@ curl -k -X POST http://localhost:8080/api/graphql \
   }'
 ```
 
-Here is an example of a GraphQL mutation to create a book:
+Qui è invece mostrato un esempio di mutation GraphQL per creare un libro:
 
 ```shell
 curl -X POST http://localhost:8080/api/graphql \
@@ -339,7 +346,7 @@ curl -X POST http://localhost:8080/api/graphql \
      }'
 ```
 
-The output of the mutation will be similar to the following:
+L'output della mutation sarà simile a quello riportato di seguito:
 
 ```json
 {
@@ -352,7 +359,7 @@ The output of the mutation will be similar to the following:
 }
 ```
 
-You can execute the query to retrieve a book by ID using the following cURL command: 
+Volendo eseguire una query per recuperare un libro specifico, puoi utilizzare il seguente comando cURL:
 
 ```shell
 curl -X POST "http://localhost:8080/api/graphql" \
@@ -375,7 +382,7 @@ curl -X POST "http://localhost:8080/api/graphql" \
      }'
 ```
 
-Output of the query to retrieve a book by ID:
+L'output della query sarà simile a quello riportato di seguito:
 
 ```json
 {
@@ -398,79 +405,80 @@ Output of the query to retrieve a book by ID:
 }
 ```
 
-Using the Swagger UI, you can perform REST requests to retrieve, create, update, and delete books and authors, as well as upload and download files to MinIO. From the Swagger UI, you can also view the OpenAPI schema in JSON and YAML formats and the possible calls you can execute via cURL.
+Tramite la Swagger UI, puoi eseguire richieste REST per recuperare, creare, aggiornare ed eliminare libri e autori oltre che caricare e scaricare file su MinIO. Dalla Swagger UI puoi anche vedere lo schema OpenAPI in formato JSON e YAML e le eventuali chiamate che puoi eseguire tramite cURL.
 
 ![OpenAPI SwaggerUI per eseguire richieste REST](src/main/docs/resources/images/openapi-ui.jpg)
 
-Figure 2 - OpenAPI SwaggerUI for executing REST requests
+Figura 2 - OpenAPI SwaggerUI per eseguire richieste REST
 
-## Application Configuration
-The key points of the application configuration include:
+## Configurazione dell'applicazione
+I punti salienti della configurazione dell'applicazione riguardano:
 
-1. Enabling and configuring the HTTPS protocol
-2. Configuring the GraphQL endpoint
-3. Configuring the database (H2 for dev profile and PostgreSQL for prod profile)
-4. Configuring ORM
-5. Configuring MinIO
-6. Configuring the OpenShift extension
+1. abilitazione e configurazione protocollo https
+2. configurazione end-point GraphQL
+3. configurazione database (H2 profilo dev e PostgreSQL profilo prod)
+4. configurazione ORM
+5. configurazione MinIO
+6. configurazione estensione OpenShift
 
-To apply changes to the current application configuration, modify the `application.properties` file located at `src/main/resources/application.properties`.
+Per applicare modifiche all'attuale configurazione dell'applicazione, agire sul file [application.properties](src/main/resources/application.properties)
 
-## Implementing Pagination Support
-When working with large datasets, pagination is essential to optimize performance and improve user experience. With GraphQL, we can easily implement pagination using either the **cursor-based** model or the traditional **offset-based** approach.
+## Implementazione del supporto alla paginazione
+Quando si lavora con grandi dataset, la paginazione è fondamentale per ottimizzare le performance e migliorare l’esperienza utente. Con GraphQL, possiamo implementare facilmente la paginazione, utilizzando sia il modello **cursor-based** che l’approccio tradizionale **offset-based**.
 
-This comparative table will help you quickly visualize the differences between cursor-based pagination and offset-based pagination.
+Questa tabella comparativa ti aiuterà a visualizzare rapidamente le differenze tra paginazione con cursori e
+paginazione con offset.
 
-| **Feature**                     | **Cursor-Based Pagination**        | **Offset-Based Pagination**        |
+| **Caratteristica**             | **Cursor-Based Pagination**        | **Offset-Based Pagination**        |
 |---------------------------------|------------------------------------|------------------------------------|
-| **Principle**                   | Navigation based on unique cursors | Navigation based on LIMIT and OFFSET |
-| **Main Use**                    | Evolving datasets or infinite scrolling | Fixed pages, stable datasets |
-| **Performance**                 | More efficient on large datasets and search operations | Good for small to medium datasets |
-| **Handling Data Changes**       | Not affected by changes during navigation | Data may change between pages (inserts/deletes) |
-| **Ease of Implementation**      | Requires cursor management | Simple to implement, similar to SQL |
-| **Query Example**               | `find().range(start, end)` with Base64 cursors | `find().range(offset, limit)` (SQL LIMIT and OFFSET) |
+| **Principio**                   | Navigazione basata su cursori univoci | Navigazione basata su LIMIT e OFFSET |
+| **Uso principale**              | Dataset in evoluzione o scorrimento infinito | Pagine fisse, dataset stabili |
+| **Prestazioni**                 | Più efficiente su grandi dataset e operazioni di ricerca | Buona per dataset piccoli e medi |
+| **Gestione delle modifiche ai dati** | Non influenzato da modifiche durante la navigazione | I dati potrebbero cambiare tra le pagine (inserimenti/rimozioni) |
+| **Facilità di implementazione** | Richiede gestione dei cursori | Semplice da implementare, simile a SQL |
+| **Esempio di query**            | `find().range(start, end)` con cursori Base64 | `find().range(offset, limit)` (LIMIT e OFFSET SQL) |
 
-Table 2 - Comparison between Cursor-Based and Offset-Based Pagination
+Tabella 2 - Confronto tra Cursor-Based e Offset-Based Pagination
 
-Expanding on the table content, we can highlight the following points:
+Espandendo il contenuto della tabella precedentemente, possiamo evidenziare i seguenti punti:
 
-**Cursor-Based Pagination**
-* Principle: Each element has a unique identifier (cursor) used to navigate between pages.
-* Advantages:
-  * Optimal for continuously changing datasets (no distortion due to changes between requests).
-  * More efficient in infinite scrolling applications.
-  * Ideal for avoiding gaps in pages.
+**Cursor-Based Pagination (Basata su Cursori)**
+* Principio: Ogni elemento ha un identificatore unico (cursor) che viene utilizzato per navigare tra le pagine.
+* Vantaggi:
+    * Ottimale per dataset in continuo cambiamento (nessuna distorsione dovuta a modifiche tra le richieste).
+    * Più efficiente nelle applicazioni con scorrimento infinito.
+    * Ideale per evitare problemi con le lacune nelle pagine.
 
-**Offset-Based Pagination**
-* Principle: Pagination is managed via LIMIT and OFFSET, similar to SQL queries, where you can define which page and how many items to load.
-* Advantages:
-  * Easy to implement and understand.
-  * Convenient for situations with a fixed amount of data.
-  * Good for scenarios where data order does not change frequently between requests.
+**Offset-Based Pagination (Basata su Offset)**
+* Principio: La paginazione è gestita tramite LIMIT e OFFSET, simile alle query SQL, dove puoi definire quale pagina e quanti elementi caricare.
+* Vantaggi:
+* Facile da implementare e comprendere.
+    * Comodo per situazioni con una quantità fissa di dati.
+    * Buona per scenari dove l’ordine dei dati non cambia frequentemente tra le richieste.
 
-This project uses [Panache](https://quarkus.io/guides/hibernate-orm-panache) and [Hibernate ORM](https://quarkus.io/guides/hibernate-orm), making it simple to implement both types of pagination. With Panache, pagination is managed through methods like `range(startIndex, endIndex)` and cursors for cursor-based pagination.
+Questo progetto usa [Panache](https://quarkus.io/guides/hibernate-orm-panache) e [Hibernate ORM](https://quarkus.io/guides/hibernate-orm) e implementare entrambe le tipologie di paginazione è semplice. Con Panache, la paginazione è gestita tramite metodi come `range(startIndex, endIndex)` e cursori per la paginazione basata su cursori.
 
-For this project, the choice fell on cursor-based pagination, as it is more efficient for large datasets and search operations. Additionally, it is more suitable for continuously changing datasets or infinite scrolling.
+Per questo progetto la scelta è ricaduta sulla paginazione con cursori, poiché è più efficiente per dataset di grandi dimensioni e operazioni di ricerca. Inoltre, è più adatta per dataset in continuo cambiamento o con scorrimento infinito.
 
-**What are the steps to implement cursor-based pagination?**
+**Quali sono i passaggi per implementare la paginazione con cursori?**
 
-1. **Calculate the cursors**: Each element must have a unique identifier (cursor) used to navigate between pages.
-2. **Add the cursors to the query**: Use the cursors to retrieve data based on position.
-3. **Return the cursors and pagination information**: In addition to the data, return the cursors for each element and pagination information (e.g., hasNextPage, endCursor).
-4. **Handle the cursors in the next query**: Use the returned cursors to retrieve data in the next query.
-5. **Implement the pagination logic**: Manage the pagination logic in the GraphQL resolver.
+1. **Calcolare i cursori**: Ogni elemento deve avere un identificatore univoco (cursor) che viene utilizzato per navigare tra le pagine.
+2. **Aggiungere i cursori alla query**: Utilizzare i cursori per recuperare i dati in base alla posizione.
+3. **Ritornare i cursori e le informazioni di paginazione**: Oltre ai dati, ritornare i cursori per ciascun elemento e le informazioni di paginazione (ad es. hasNextPage, endCursor).
+4. **Gestire i cursori nella query successiva**: Utilizzare i cursori ritornati per recuperare i dati nella query successiva.
+5. **Implementare la logica di paginazione**: Gestire la logica di paginazione nel resolver GraphQL.
 
-To implement cursor-based pagination, we need three main elements: `BookConnection`, `BookEdge`, and `PageInfo`.
-These elements play a fundamental role in cursor-based pagination in GraphQL. These objects represent the response structure, which includes the data and the necessary information to navigate between result pages.
+Per implementare la paginazione con cursori, abbiamo bisogno di tre elementi principali: `BookConnection`, `BookEdge` e `PageInfo`.
+Questi elementi giocano un ruolo fondamentale nella paginazione basata su cursori in GraphQL. Questi oggetti rappresentano la struttura della risposta, che include i dati e le informazioni necessarie per navigare tra le pagine di risultati.
 
-### What is BookConnection
-The `BookConnection` object represents a **connection of elements that can contain multiple edges** (in this case, multiple books). It contains data related to the edges (the individual books with their cursors) and pagination information (e.g., if there are more pages of data).
+### Cosè BookConnection
+L’oggetto `BookConnection` rappresenta una **connessione di elementi che può contenere più edge** (in questo caso, più libri). Contiene i dati relativi agli edge (i singoli libri con i loro cursori) e le informazioni di paginazione (ad esempio, se esistono altre pagine di dati).
 
-The main roles of BookConnection are:
-* Aggregating the edges (list elements, in this case, books).
-* Including a PageInfo object to provide pagination details (if there are more pages, end cursor, etc.).
+I ruoli principali di BookConnection sono:
+* aggregare gli edges (elementi della lista, in questo caso i libri).
+* includere un oggetto PageInfo per fornire dettagli sulla paginazione (se ci sono pagine successive, cursore finale, ecc.).
 
-Below is an example implementation of `BookConnection`, which is a GraphQL Type (see the `@Type` annotation). The complete code is available in the example project in `BookConnection.java`.
+A seguire un esempio di implementazione di `BookConnection` che è un Type GraphQL (vedi annotazione `@Type`). Il codice completo è disponibile nel progetto di esempio in [BookConnection.java](src/main/java/it/dontesta/labs/quarkus/graphql/pagination/type/BookConnection.java).
 
 ```java
 package it.dontesta.labs.quarkus.graphql.pagination.type;
@@ -536,14 +544,14 @@ public class BookConnection {
 }
 ```
 
-### What is BookEdge
-Each `BookEdge` represents a single book within a data connection. The edge is the link between the book and the cursor that allows you to navigate between pages.
+### Cosè BookEdge
+Ogni `BookEdge` rappresenta un singolo libro all’interno di una connessione di dati. L’edge è il legame tra il libro e il cursore che ti permette di navigare tra le pagine.
 
-The main roles of `BookEdge` are:
-* Contains the node, which represents the actual book (the `Book` object).
-* Contains the cursor, which **is a unique identifier** encoded (usually in Base64) that allows pagination between subsequent pages.
+I ruoli principali di `BookEdge` sono:
+* contiene il node, che rappresenta il libro vero e proprio (l’oggetto `Book`).
+* contiene il cursor, che **è un identificatore univoco** codificato (solitamente in Base64) che permette di fare paginazione tra le pagine successive.
 
-Below is an example implementation of `BookEdge`, which is a GraphQL Type (see the `@Type` annotation). The complete code is available in the example project in `BookEdge.java`.
+A seguire un esempio di implementazione di `BookEdge` che è un Type GraphQL (vedi annotazione `@Type`). Il codice completo è disponibile nel progetto di esempio in [BookEdge.java](src/main/java/it/dontesta/labs/quarkus/graphql/pagination/type/BookEdge.java).
 
 ```java
 package it.dontesta.labs.quarkus.graphql.pagination.type;
@@ -609,14 +617,14 @@ public class BookEdge {
 }
 ```
 
-### What is PageInfo
-The `PageInfo` object contains crucial information about pagination, such as whether there are more pages of data available and what the end cursor will be for navigating to the next page.
+### Cosè PageInfo
+L’oggetto `PageInfo` contiene informazioni cruciali sulla paginazione, come se ci sono altre pagine di dati disponibili e quale sarà il cursore finale per la navigazione alla pagina successiva.
 
-The main roles of `PageInfo` are:
-* hasNextPage: indicates if there are more pages to load. If the list of books contains fewer items than requested (e.g., 10 books out of 20), this field will be true, indicating that more pages are available.
-* endCursor: is the cursor of the last element in the current list, which you can use as `after` in subsequent queries to get the next page.
+I ruoli principali di `PageInfo` sono:
+* hasNextPage: indica se ci sono ulteriori pagine da caricare. Se la lista di libri contiene un numero inferiore a quello richiesto (es. 10 libri su 20), questo campo sarà true, indicando che ci sono più pagine disponibili.
+* endCursor: è il cursore dell’ultimo elemento nella lista corrente, che puoi usare come after nelle query successive per ottenere la pagina successiva.
 
-Below is an example implementation of `PageInfo`, which is a GraphQL Type (see the `@Type` annotation). The complete code is available in the example project in `PageInfo.java`.
+A seguire un esempio di implementazione di `PageInfo` che è un Type GraphQL (vedi annotazione `@Type`). Il codice completo è disponibile nel progetto di esempio in [PageInfo.java](src/main/java/it/dontesta/labs/quarkus/graphql/pagination/type/PageInfo.java).
 
 ```java
 package it.dontesta.labs.quarkus.graphql.pagination.type;
@@ -681,16 +689,16 @@ public class PageInfo {
 }
 ```
 
-### How BookConnection, BookEdge, and PageInfo Work Together
+### Come funzionano insieme BookConnection, BookEdge e PageInfo?
 
-1. **BookConnection**: It is the central point of the response, containing both `BookEdge` (the actual elements) and pagination information through the `PageInfo` object.
-2. **BookEdge**: Each edge contains the book itself (the `Book` object) and a unique cursor that allows navigation through the pages.
-3. **PageInfo**: Provides critical information for the client, such as whether there are subsequent pages and which cursor to use for the next page.
+1. BookConnection: è il punto centrale della risposta, che contiene sia i `BookEdge` (gli elementi reali) sia le informazioni di paginazione attraverso l’oggetto `PageInfo`.
+2. BookEdge: ogni edge contiene il libro stesso (l’oggetto `Book`) e un cursore univoco che consente di navigare attraverso le pagine.
+3. PageInfo: fornisce informazioni critiche per il cliente, come se esistono pagine successive e quale cursore usare per la pagina successiva.
 
-### Modifying the BookGraphQL Resolver
-To implement cursor-based pagination, we need to make some changes to the `BookGraphQL` resolver. Specifically, we need to add a new `books` method that accepts pagination parameters like `first` (for the number of books to retrieve) and `after` (for the cursor of the previous element). Then, use Panache to retrieve the books in a paginated manner and return a list of `BookEdge` with their respective cursors.
+### Modifica al resolver BookGraphQL
+Per implementare la paginazione con cursori, dobbiamo apportare alcune modifiche al resolver `BookGraphQL`. In particolare, dobbiamo aggiungere un nuovo metodo `books` che accetti i parametri di paginazione come `first` (per il numero di libri da recuperare) e `after` (per il cursore dell’elemento precedente). Fatto ciò, utilizzare Panache per recuperare i libri in modo paginato e restituire una lista di `BookEdge` con i relativi cursori.
 
-Below is the implementation of the `books` method that accepts pagination parameters and returns a `BookConnection` with the books and pagination information. The complete code is available in the example project in `BookGraphQL.java`.
+A seguire l'implementazione del metodo `books` che accetta i parametri di paginazione e restituisce una `BookConnection` con i libri e le informazioni di paginazione. Il codice completo è disponibile nel progetto di esempio in [BookGraphQL.java](src/main/java/it/dontesta/labs/quarkus/graphql/ws/graphql/api/BookGraphQL.java).
 
 ```java
     /**
@@ -736,16 +744,16 @@ public BookConnection books(@Name("first") int first,
 }
 ```
 
-Using the `range(startIndex, startIndex + first - 1)` method of Panache, we can retrieve books in a paginated manner. We add cursors (encoded in Base64) for each book and return a list of `BookEdge` along with pagination information. As a final step, we check if there are more pages available and return a `BookConnection` with the books and pagination information.
+Usando il metodo `range(startIndex, startIndex + first - 1)` di Panache, possiamo recuperare i libri in modo paginato. Aggiungiamo i cursori (codificati in Base64) per ciascun libro e restituiamo una lista di `BookEdge` insieme alle informazioni di paginazione. Come ultimo passaggio, verifichiamo se ci sono altre pagine disponibili e restituiamo una `BookConnection` con i libri e le informazioni di paginazione.
 
-The cursors are encoded in Base64 to ensure they are unique and safe to use in queries. The `encodeCursor` function encodes the book ID, while `decodeCursor` decodes it for use in the next query.
+I cursori sono codificati in Base64 per garantire che siano univoci e sicuri da usare nelle query. La funzione encodeCursor codifica l’ID del libro, mentre decodeCursor lo decodifica per usarlo nella query successiva.
 
-These changes to `BookGraphQL` allow you to implement cursor-based pagination in GraphQL. The response structure includes a `BookConnection` object, which contains the `BookEdge` (with books and cursors) and pagination information via `PageInfo`.
+Queste modifiche al BookGraphQL ti permettono di implementare la paginazione basata su cursori in GraphQL. La struttura della risposta include un oggetto `BookConnection`, che contiene gli `BookEdge` (con i libri e i cursori) e le informazioni di paginazione tramite PageInfo.
 
-Similarly, you can implement cursor-based pagination for other data types, such as authors, publishers, or any other entity. The structure is similar, with a `Connection` object containing the `Edge` and pagination information.
+Allo stesso modo, puoi implementare la paginazione con cursori per altri tipi di dati, come autori, editori o qualsiasi altra entità. La struttura è simile, con un oggetto Connection che contiene gli Edge e le informazioni di paginazione.
 
-### Testing cursor-based pagination
-To test cursor-based pagination, we can use the `books` query to retrieve, for example, the first three books. The `books` query accepts two parameters: `first` (the number of items to retrieve) and `after` (the cursor for navigation where MA== means 0).
+### Test della paginazione con cursori
+Per testare la paginazione con cursori, possiamo utilizzare la query `books` per recuperare per esempio i primi tre libri. La query `books` accetta due parametri: `first` (il numero di elementi da recuperare) e `after` (il cursore per la navigazione dove MA== vuol dire 0).
 
 ```graphql
 query {
@@ -770,7 +778,7 @@ query {
 }
 ```
 
-The expected output will be similar to the one shown below; where `edges` contains the retrieved books with their cursors (encoded in Base64), `pageInfo` indicates that there are more pages available (`hasNextPage`: true) and provides the `endCursor` to get the next page.
+L'output atteso sarà simile a quello riportato di seguito; dove `edges` contiene i libri recuperati con i loro cursori (codificati in Base64), `pageInfo` indica che ci sono altre pagine disponibili (`hasNextPage`: true) e fornisce l’`endCursor` per ottenere la pagina successiva.
 
 ```json
 {
@@ -841,7 +849,7 @@ The expected output will be similar to the one shown below; where `edges` contai
 }
 ```
 
-The following output shows the query to retrieve the next page of books using the `endCursor` returned from a previous query. In this result, it is evident that `hasNextPage` is `false`, indicating that there are no more pages available.
+L'output a seguire mostra invece la query per recuperare la pagina successiva di libri utilizzando il cursore `endCursor` restituito da un precedente query. In questo risultato è evidente che `hasNextPage` è `false`, indicando che non ci sono altre pagine disponibili.
 
 ```json
 {
@@ -867,25 +875,25 @@ The following output shows the query to retrieve the next page of books using th
 }
 ```
 
-## Subscriptions with GraphQL
-[Subscriptions in GraphQL](https://graphql.org/learn/subscriptions/) allow you to receive real-time updates whenever a specific event occurs on the server. Unlike queries and mutations, which are single requests, subscriptions keep an open connection and send data to the client whenever the monitored event occurs.
+## Subscriptions con GraphQL
+Le [Subscription in GraphQL](https://graphql.org/learn/subscriptions/) permettono di ricevere aggiornamenti in tempo reale ogni volta che si verifica un determinato evento nel server. A differenza delle query e delle mutation, che sono richieste singole, le subscription mantengono una connessione aperta e inviano dati al client ogni volta che l’evento monitorato si verifica.
 
-GraphQL uses the [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) protocol to handle subscriptions, allowing the server to send push updates to the client without the client having to make repeated requests ([polling](https://en.wikipedia.org/wiki/Polling_(computer_science))). This is particularly useful for real-time applications such as chat, news feeds, monitoring dashboards, and much more.
+GraphQL utilizza il protocollo [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) per gestire le subscription, consentendo al server di inviare aggiornamenti in [push](https://it.wikipedia.org/wiki/Notifica_push) al client senza che questo debba effettuare richieste ripetute ([polling](https://it.wikipedia.org/wiki/Polling_(informatica))). Questo è particolarmente utile per applicazioni in tempo reale, come chat, feed di notizie, dashboard di monitoraggio e molto altro.
 
-**How Do Subscriptions Work?**
-1. The client executes a **subscription** specifying which type of event it wants to monitor.
-2. The server keeps the WebSocket connection open.
-3. Whenever a relevant event occurs (e.g., creation of a new book), the server sends the updated data to the client in real-time.
+**Come Funzionano le Subscription?**
+1. Il client esegue una **subscription** specificando quale tipo di evento vuole monitorare.
+2. Il server mantiene aperta la connessione WebSocket.
+3. Ogni volta che un evento rilevante si verifica (es. creazione di un nuovo libro), il server invia i dati aggiornati al client in tempo reale.
 
-In Quarkus, you can implement subscriptions with SmallRye GraphQL, which supports WebSocket for real-time communication. To implement subscriptions in the simplest way possible, we will act directly on the `BookGraphQL` resolver to send real-time updates whenever a new book is created.
+In Quarkus, puoi implementare le subscription con SmallRye GraphQL, che supporta WebSocket per la comunicazione in tempo reale. Per implementare le subscription nel mondo più semplice possibile, agiremo direttamente sul resolver GraphQL `BookGraphQL` per inviare aggiornamenti in tempo reale ogni volta che viene creato un nuovo libro.
 
-### Implementation of Subscriptions
-To implement subscriptions, we need to follow these steps:
-1. Add a `bookProcessor`: a `BroadcastProcessor` from Munity that notifies clients when a new book is created.
-2. Modify the `createBook` method to send a book creation event to the `bookProcessor`.
-3. Create a `bookCreated` method that returns a `Publisher` to receive real-time updates.
+### Implementazione delle Subscription
+Per implementare le subscription, dobbiamo seguire questi passaggi:
+1. aggiungere un bookProcessor: un BroadcastProcessor di Munity che notifica i client quando viene creato un nuovo libro;
+2. modificare il metodo `createBook` per inviare un evento di creazione del libro al bookProcessor;
+3. creare un metodo `bookCreated` che restituisce un Publisher per ricevere gli aggiornamenti in tempo reale.
 
-Below is the implementation of the steps described above. The complete code is available in the example project in `BookGraphQL.java`.
+A seguire l'implementazione dei passaggi sopra descritti. Il codice completo è disponibile nel progetto di esempio in [BookGraphQL.java](src/main/java/it/dontesta/labs/quarkus/graphql/ws/graphql/api/BookGraphQL.java).
 
 ```java
     // Broadcast processor to notify subscribers
@@ -928,18 +936,18 @@ Below is the implementation of the steps described above. The complete code is a
     }
 ```
 
-After creating a new book, we send the book creation event to the `processor` using `processor.onNext(book)`. This notifies clients subscribed to the `bookCreated` subscription whenever a new book is created. The `bookCreated` method returns a `Multi` stream of books, representing the books created in real-time.
+Dopo aver creato un nuovo libro, inviamo l’evento di creazione del libro al `processor` utilizzando `processor.onNext(book)`. Questo notifica i client che si sono sottoscritti alla subscription `bookCreated` ogni volta che viene creato un nuovo libro. Il metodo `bookCreated` restituisce un `Multi` stream di libri, che rappresenta i libri creati in tempo reale.
 
-### Testing Subscriptions
-To test subscriptions, we can use a WebSocket client like [GraphiQL](http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-ui) or [Apollo Client](https://www.apollographql.com/docs/react/get-started/). In this example, we will use GraphiQL to test subscriptions since it is already integrated with SmallRye GraphQL.
+### Test delle Subscription
+Per testare le subscription, possiamo utilizzare un client WebSocket come [GraphiQL](http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-ui) o [Apollo Client](https://www.apollographql.com/docs/react/get-started/). In questo esempio, utilizzeremo GraphiQL per testare le subscription visto che è già integrato in SmallRye GraphQL.
 
-To test subscriptions, follow these steps:
-1. Start the application in Dev mode with the command `./mvnw quarkus:dev` or `quarkus dev`.
-2. Open GraphiQL by visiting the URL [http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-ui](http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-ui).
-3. Execute the `bookCreated` subscription query to receive real-time updates.
-4. Create a new book using the `createBook` mutation and verify that GraphiQL receives the real-time update.
+Per testare le subscription, esegui i seguenti passaggi:
+1. avvio dell'applicazione in modalità Dev con il comando `./mvnw quarkus:dev` o `quarkus dev`;
+2. avvio di GraphiQL visitando l'URL [http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-ui](http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-ui);
+3. esecuzione della query di subscription `bookCreated` per ricevere gli aggiornamenti in tempo reale.
+4. creazione di un nuovo libro utilizzando la mutation `createBook` e verifica che GraphiQL riceva l'aggiornamento in tempo reale.
 
-The `bookCreated` subscription query is similar to the one shown below:
+La query di subscription `bookCreated` è simile a quella riportata di seguito:
 
 ```graphql
 subscription ListenForNewBook {
@@ -955,9 +963,9 @@ subscription ListenForNewBook {
 }
 ```
 
-Once the subscription query is executed, GraphiQL will wait for real-time updates. Whenever a new book is created, GraphiQL will receive the real-time update with the book details.
+Una volta eseguita la query di subscription, GraphiQL rimarrà in attesa di aggiornamenti in tempo reale. Ogni volta che viene creato un nuovo libro, GraphiQL riceverà l’aggiornamento in tempo reale con i dettagli del libro.
 
-Using cURL, we send a mutation to create a new book:
+Con cURL inviamo una mutation per creare un nuovo libro:
 
 ```shell
 curl -X POST http://localhost:8080/api/graphql \
@@ -989,84 +997,86 @@ curl -X POST http://localhost:8080/api/graphql \
      }'
 ```
 
-Once the mutation is executed, GraphiQL will receive the real-time update with the details of the created book. Below is a demo showing how to test subscriptions with GraphiQL.
+Una volta eseguita la mutation, GraphiQL riceverà l’aggiornamento in tempo reale con i dettagli del libro creato. A seguire una demo che mostra come testare le subscription con GraphiQL.
 
 ![Demo Subscription con GraphiQL](src/main/docs/resources/images/demo-subscription-graphql.gif)
 
-From the demo, it is evident that GraphiQL receives real-time updates via WebSocket whenever a new book is created. This demonstrates how GraphQL subscriptions are useful for receiving real-time updates without having to make repeated requests.
+Dalla demo è evidente che GraphiQL riceve l’aggiornamento in tempo reale tramite WebSocket ogni volta che viene creato un nuovo libro. Questo dimostra come le subscription in GraphQL siano utili per ricevere aggiornamenti in tempo reale senza dover effettuare richieste ripetute.
 
-## Accessing the MinIO Console
-When you start the application in Dev mode, you can access the MinIO console to upload and download files or simply to check the status of the Object Store. To access the MinIO console, open your browser and visit the URL: <http://localhost:8080/q/dev-ui/extensions>, identify the box named Minio Client extension, and access the console from there.
+## Accesso alla console di MinIO
+Quando avviate l'applicazione in modalità Dev, possiamo accedere alla console di MinIO per caricare e scaricare file o semplicemente per verificare
+lo stato dell'Object Store. Per accedere alla console di MinIO, apri il browser e visita l'URL: <http://localhost:8080/q/dev-ui/extensions> identificando il box denominato Minio Client extension e dal li accedere alla console.
 
 ![Console di MinIO](src/main/docs/resources/images/box-ui-accesso-minio-console.jpg)
 
-![Minio Client extension for accessing the MinIO Console](src/main/docs/resources/images/box-ui-accesso-minio-console.jpg)
+Figura 3 - Minio Client extension per accesso alla Console di MinIO
 
-Figure 3 - Minio Client extension for accessing the MinIO Console
-
-The following figure shows the MinIO console, where you can upload and download files, create and delete buckets, and view information about the Object Store.
+La figura a seguire mostra la console di MinIO, dove puoi caricare e scaricare file, creare e eliminare bucket e visualizzare le informazioni sull'Object Store.
 
 ![Console di MinIO](src/main/docs/resources/images/view-bucket-minio-dev.jpg)
 
-Figure 4 - MinIO Console
+Figura 4 - Console di MinIO
 
-## Creating the artifact and running the application
+## Creazione dell'artefatto ed eseguire l’applicazione
 
-The application can be packaged using the command:
+L’applicazione può essere impacchettata utilizzando il comando:
 
 ```bash
 ./mvnw package
 ```
 
-This command generates the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Note that this is not an über-jar, as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+Questo comando genera il file `quarkus-run.jar` nella directory `target/quarkus-app/`.
+Tieni presente che non si tratta di un über-jar, poiché le dipendenze vengono copiate nella directory
+`target/quarkus-app/lib/`.
 
-The application can now be run using the command:
+L’applicazione può ora essere eseguita utilizzando il comando:
 
 ```bash
 java -jar target/quarkus-app/quarkus-run.jar.
 ```
 
-If you want to create an über-jar, run the following command:
+Se desideri creare un über-jar, esegui il seguente comando:
 
 ```bash
 ./mvnw package -Dquarkus.package.jar.type=uber-jar
 ```
 
-The application, packaged as an über-jar, can be run with:
+L’applicazione, impacchettata come über-jar, può essere eseguita con:
 
 ```bash
 java -jar target/*-runner.jar.
 ```
 
-## Creating a native executable
+## Creare un eseguibile nativo
 
-You can create a native executable using the command:
+Puoi creare un eseguibile nativo utilizzando il comando:
 
 ```bash
 ./mvnw package -Dnative
 ```
 
-Alternatively, if you do not have GraalVM installed, you can create the native executable using a container with the command:
+Oppure, se non hai installato GraalVM, puoi creare l’eseguibile nativo utilizzando un container con il comando:
 
 ```bash
 ./mvnw package -Dnative -Dquarkus.native.container-build=true
 ```
 
-After creation, you can run your native executable with:
+Dopo la creazione, puoi eseguire il tuo eseguibile nativo con:
 
 ```bash
 ./target/quarkus-graphql-quickstart-1.0.0-SNAPSHOT-runner
 ```
 
-## Running the application via Docker Compose and Podman Compose
-The container images of the application are created through two GitHub actions defined in the files: `docker_publish.yml` and `docker_publish_native_amd64.yml` within the project, directory `.github/workflows`.
+Per maggiori informazioni sulla creazione di eseguibili nativi, consulta la guida ufficiale: https://quarkus.io/guides/maven-tooling.
 
-The created images are available on Docker Hub at the following link: https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart/tags.
+## Esecuzione dell'applicazione via Docker Compose e Podman Compose
+Le immagini container dell'applicazione sono create tramite due GitHub action che sono definite nei file: `docker_publish.yml` e `docker_publish_native_amd64.yml` all'interno del progetto, directory `.github/workflows`.
 
-To build the container image in JVM mode, the reference Dockerfile is `Dockerfile.jvm` (in `src/main/docker/Dockerfile.jvm`) and for the Native mode container image, the reference Dockerfile is `Dockerfile.native` (in `src/main/docker/Dockerfile.native`).
+Le immagini create sono disponibili su Docker Hub al seguente link https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart/tags.
 
-The file [docker-compose.yml](src/main/docker/docker-compose.yml) was created to run the application in container mode. To run the application in container mode, execute the command:
+Per costruire l'immagine container JVM mode, il Dockerfile di riferimento è `Dockerfile.jvm` (in `src/main/docker/Dockerfile.jvm`) e per l'immagine container Native mode, il Dockerfile di riferimento è `Dockerfile.native` (in `src/main/docker/Dockerfile.native`).
+
+Il file [docker-compose.yml](src/main/docker/docker-compose.yml) è stato creato per eseguire l'applicazione in modalità container. Per eseguire l'applicazione in modalità container, esegui il comando:
 
 ```shell
 # Esportazione di APP_KEYSTORE_PATH per montare il keystore all'interno del container
@@ -1086,7 +1096,7 @@ docker-compose -f src/main/docker/docker-compose.yml up
 docker compose -f src/main/docker/docker-compose.yml up
 ```
 
-Once the stack of services configured in `docker-compose.yml` has started, the application will be available at: [http://localhost:8080](http://localhost:8080) and [https://localhost:8443](https://localhost:8443). The PostgreSQL database is available on the standard port 5432, while MinIO is available on port 9090. You can see the status of the service stack by running the `docker ps` or `podman ps` command. Below is an example of the command output.
+Una volta che lo stack dei servizi configurati in `docker-compose.yml` è stato avviato, l'applicazione sarà disponibile all'indirizzo: [http://localhost:8080](http://localhost:8080) e [https://localhost:8443](https://localhost:8443). Il database PostgreSQL è disponibile sulla porta standard 5432, mentre MinIO è disponibile sulla porta 9090. Puoi vedere lo stato dello stack dei servizi eseguendo il comando `docker ps` o `podman ps`. A seguire un esempio di output del comando.
 
 ```shell
 CONTAINER ID  IMAGE                                                 COMMAND               CREATED       STATUS        PORTS                                                                   NAMES
@@ -1095,7 +1105,7 @@ d0311857c285  docker.io/library/postgres:16                         postgres    
 386fdad9f4cb  docker.io/amusarra/quarkus-graphql-quickstart:latest                        24 hours ago  Up 5 seconds  0.0.0.0:8080->8080/tcp, 0.0.0.0:8443->8443/tcp, 0.0.0.0:9090->9090/tcp  quarkus-graphql
 ```
 
-## Guide to the services and extensions used
+## Guida ai servizi e alle estensioni utilizzate
 
 - ArC ([guide](https://quarkus.io/guides/cdi-reference)): Build time CDI dependency injection
 - JDBC Driver - PostgreSQL ([guide](https://quarkus.io/guides/datasource)): Connect to the PostgreSQL database via JDBC
