@@ -416,6 +416,24 @@ The key points of the application configuration include:
 
 To apply changes to the current application configuration, modify the `application.properties` file located at `src/main/resources/application.properties`.
 
+### Application lifecycle
+At startup, the application, load the data from the `sample_data.sql` file located in the `src/main/resources` directory. This file contains the initial data to populate the database tables. The data is loaded automatically by Quarkus at startup by setting the `quarkus.hibernate-orm.sql-load-script` property to `sample_data.sql`.
+
+At startup, the application also creates the MinIO bucket `book-cover` to store the files uploaded to MinIO. The method `BookFrontBackCoverLoader#onBookFrontCoverUpload` is an event listener that triggers on application startup to upload book front and back cover images to Minio. It uses the @Observes annotation to listen for the StartupEvent.
+
+After the upload files to MinIO is completed, the call `uploadEvent.fire(new UploadEvent(bucketName, uploadedFiles))` fire an UploadEvent to notify the listeners that the files have been uploaded. The `uploadEvent.fire` method is called with a new instance of the `UploadEvent` class, which contains the `bucketName` and the list of `uploadedFiles`. This is done to trigger any event listeners that are observing the UploadEvent. See the method `BookFrontBackCoverLoader.onUploadEvent(@Observes UploadEvent event)`.
+
+When you start application in development mode, should see the following output in the console.
+
+```shell
+2025-02-01 23:57:23,945 DEBUG [it.don.lab.qua.gra.s3.ser.MinioService] (Quarkus Main Thread) Uploading object '9780810885720_algorithmic_pattern_analysis_back_cover.jpg' with byte array content to bucket 'book-cover'...
+2025-02-01 23:57:23,951 DEBUG [it.don.lab.qua.gra.s3.ser.MinioService] (Quarkus Main Thread) Uploaded object '9780810885720_algorithmic_pattern_analysis_back_cover.jpg' to bucket 'book-cover'
+2025-02-01 23:57:23,952 DEBUG [it.don.lab.qua.gra.app.lif.s3.BookFrontBackCoverLoader] (Quarkus Main Thread) Uploaded book front and back cover image: {9780810885720_algorithmic_pattern_analysis_back_cover.jpg} to Minio into bucket name {book-cover}
+2025-02-01 23:57:23,968 INFO  [it.don.lab.qua.gra.app.lif.s3.BookFrontBackCoverLoader] (Quarkus Main Thread) Received upload event for bucket name {book-cover} with uploaded files: {[algorithmic_pattern_analysis_front_cover.jpg, 9780785316371_networked_neural_strategy_back_cover.jpg, 9781501582327_introduction_to_data_science_back_cover.jpg, introduction_to_data_science_back_cover.jpg, 9781501582327_introduction_to_data_science_front_cover.jpg, 9780321967974_the_art_of_software_engineering_front_cover.jpg, networked_neural_strategy_front_cover.jpg, 9780596805190_machine_learning_algorithms_front_cover.jpg, the_art_of_software_engineering_back_cover.jpg, networked_neural_strategy_back_cover.jpg, machine_learning_algorithms_back_cover.jpg, 9780596805190_machine_learning_algorithms_back_cover.jpg, 9780785316371_networked_neural_strategy_front_cover.jpg, 9780810885720_algorithmic_pattern_analysis_front_cover.jpg, machine_learning_algorithms_front_cover.jpg, the_art_of_software_engineering_front_cover.jpg, 9780321967974_the_art_of_software_engineering_back_cover.jpg, introduction_to_data_science_front_cover.jpg, algorithmic_pattern_analysis_back_cover.jpg, 9780810885720_algorithmic_pattern_analysis_back_cover.jpg]}
+...
+2025-02-01 23:57:24,178 DEBUG [it.don.lab.qua.gra.app.lif.s3.BookFrontBackCoverLoader] (Quarkus Main Thread) Updated Book entity with ISBN {9780321967974} with front cover URL {http://localhost:39869/book-cover/9780321967974_the_art_of_software_engineering_front_cover.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioaccess%2F20250201%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250201T225724Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=3265bdd47f230528930148c3fdf5d1cfbeff5f1d28851b9af2c360e77b75fb36} and back cover URL {http://localhost:39869/book-cover/9780321967974_the_art_of_software_engineering_back_cover.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioaccess%2F20250201%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250201T225724Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=a772677a0c30ab1c10e93393d4e5d0e701f2d056517d5135fd2e8ffff23fdad7}
+```
+
 ## Implementing Pagination Support
 When working with large datasets, pagination is essential to optimize performance and improve user experience. With GraphQL, we can easily implement pagination using either the **cursor-based** model or the traditional **offset-based** approach.
 
@@ -754,6 +772,8 @@ query {
       node {
         id
         title
+        frontCorverImageUrl
+        backCorverImageUrl
         authors {
           firstName
           lastName
@@ -774,70 +794,76 @@ The expected output will be similar to the one shown below; where `edges` contai
 
 ```json
 {
-   "data": {
-      "books": {
-         "edges": [
-            {
-               "node": {
-                  "id": 4,
-                  "title": "Enhanced multimedia interface",
-                  "authors": [
-                     {
-                        "firstName": "David",
-                        "lastName": "Jones"
-                     },
-                     {
-                        "firstName": "Sarah",
-                        "lastName": "Miller"
-                     }
-                  ],
-                  "isbn": "9780230278458"
-               },
-               "cursor": "NA=="
-            },
-            {
-               "node": {
-                  "id": 5,
-                  "title": "Optimized data throughput",
-                  "authors": [
-                     {
-                        "firstName": "Michael",
-                        "lastName": "Davis"
-                     },
-                     {
-                        "firstName": "Jessica",
-                        "lastName": "Wilson"
-                     }
-                  ],
-                  "isbn": "9781473689271"
-               },
-               "cursor": "NQ=="
-            },
-            {
-               "node": {
-                  "id": 6,
-                  "title": "Decentralized systems integration",
-                  "authors": [
-                     {
-                        "firstName": "Christopher",
-                        "lastName": "Garcia"
-                     },
-                     {
-                        "firstName": "Ashley",
-                        "lastName": "Rodriguez"
-                     }
-                  ],
-                  "isbn": "9781607436911"
-               },
-               "cursor": "Ng=="
-            }
-         ],
-         "pageInfo": {
-            "hasNextPage": true,
-            "endCursor": "Ng=="
-         }
+  "data": {
+    "books": {
+      "edges": [
+        {
+          "node": {
+            "id": 4,
+            "title": "Enhanced multimedia interface",
+            "frontCorverImageUrl": null,
+            "backCorverImageUrl": null,
+            "authors": [
+              {
+                "firstName": "David",
+                "lastName": "Jones"
+              },
+              {
+                "firstName": "Sarah",
+                "lastName": "Miller"
+              }
+            ],
+            "isbn": "9780230278458"
+          },
+          "cursor": "NA=="
+        },
+        {
+          "node": {
+            "id": 5,
+            "title": "Optimized data throughput",
+            "frontCorverImageUrl": null,
+            "backCorverImageUrl": null,
+            "authors": [
+              {
+                "firstName": "Michael",
+                "lastName": "Davis"
+              },
+              {
+                "firstName": "Jessica",
+                "lastName": "Wilson"
+              }
+            ],
+            "isbn": "9781473689271"
+          },
+          "cursor": "NQ=="
+        },
+        {
+          "node": {
+            "id": 6,
+            "title": "Decentralized systems integration",
+            "frontCorverImageUrl": null,
+            "backCorverImageUrl": null,
+            "authors": [
+              {
+                "firstName": "Christopher",
+                "lastName": "Garcia"
+              },
+              {
+                "firstName": "Ashley",
+                "lastName": "Rodriguez"
+              }
+            ],
+            "isbn": "9781607436911"
+          },
+          "cursor": "Ng=="
+        }
+      ],
+      "pageInfo": {
+        "hasNextPage": true,
+        "endCursor": "Ng=="
       }
-   }
+    }
+  }
 }
 ```
 
@@ -852,6 +878,8 @@ The following output shows the query to retrieve the next page of books using th
           "node": {
             "id": 16,
             "title": "Machine Learning Algorithms",
+            "frontCorverImageUrl": "http://localhost:39869/book-cover/9780596805190_machine_learning_algorithms_front_cover.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioaccess%2F20250201%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250201T233159Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=8015c92ed39ca24596dff47d9dadb5f31d85e297b3a802b2914d90e6b64b2120",
+            "backCorverImageUrl": "http://localhost:39869/book-cover/9780596805190_machine_learning_algorithms_back_cover.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioaccess%2F20250201%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250201T233159Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=4542ade0ca4a540b39deaf834c4e65f20637540de527cd0a10ef782943faeffd",
             "authors": [],
             "isbn": "9780596805190"
           },
@@ -866,6 +894,12 @@ The following output shows the query to retrieve the next page of books using th
   }
 }
 ```
+
+In this case, the book with ID 16 has been the front cover and back cover images uploaded to MinIO. Below is show the preview of the front cover image of the book with ID 16.
+
+![Machine Learning Algorithms Front Cover](src/main/docs/resources/images/demo-with-image-preview-graphql-ui.jpg)
+
+Figure 3 - Machine Learning Algorithms Front Cover stored in MinIO
 
 ## Subscriptions with GraphQL
 [Subscriptions in GraphQL](https://graphql.org/learn/subscriptions/) allow you to receive real-time updates whenever a specific event occurs on the server. Unlike queries and mutations, which are single requests, subscriptions keep an open connection and send data to the client whenever the monitored event occurs.
@@ -1000,13 +1034,13 @@ When you start the application in Dev mode, you can access the MinIO console to 
 
 ![Minio Client extension for accessing the MinIO Console](src/main/docs/resources/images/box-ui-accesso-minio-console.jpg)
 
-Figure 3 - Minio Client extension for accessing the MinIO Console
+Figure 4 - Minio Client extension for accessing the MinIO Console
 
 The following figure shows the MinIO console, where you can upload and download files, create and delete buckets, and view information about the Object Store.
 
 ![Console di MinIO](src/main/docs/resources/images/view-bucket-minio-dev.jpg)
 
-Figure 4 - MinIO Console
+Figure 5 - MinIO Console
 
 ## Creating the artifact and running the application
 
