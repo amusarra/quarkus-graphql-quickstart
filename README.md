@@ -1019,6 +1019,10 @@ The application can be packaged using the command:
 This command generates the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
 Note that this is not an über-jar, as the dependencies are copied into the `target/quarkus-app/lib/` directory.
 
+> If you want run the application via jar remember that you need a database and MinIO running.
+> You can see the docker-compose file in the `src/main/docker` directory for more information
+> on how to start the services.
+
 The application can now be run using the command:
 
 ```bash

@@ -1029,6 +1029,9 @@ Questo comando genera il file `quarkus-run.jar` nella directory `target/quarkus-
 Tieni presente che non si tratta di un über-jar, poiché le dipendenze vengono copiate nella directory
 `target/quarkus-app/lib/`.
 
+> Se vuoi eseguire l'applicazione tramite jar, ricorda che hai bisogno di un database e MinIO in esecuzione.
+> Puoi vedere il file docker-compose nella directory `src/main/docker` per maggiori informazioni su come avviare i servizi.
+
 L’applicazione può ora essere eseguita utilizzando il comando:
 
 ```bash
