@@ -102,21 +102,21 @@ To launch the project in development (or dev) mode and test the GraphQL and REST
 To clone the project's git repository, run the command:
 
 ```shell
-# Clona il repository git del progetto
+# Clone the project's git repository
 git clone https://github.com/amusarra/quarkus-graphql-quickstart.git
 ```
 
 Per avviare l'applicazione in modalità sviluppo, esegui il comando:
 
 ```shell
-# Avvia l'applicazione in modalità sviluppo
-# Tramite il wrapper Maven integrato
+# Start the application in development mode
+# by using the Maven wrapper integrated with the project.
 ./mvnw quarkus:dev
 ```
 
 ```shell
-# Tramite il comando Quarkus CLI
-# Il comando è disponibile solo se hai installato il Quarkus CLI.
+# By using the Quarkus CLI.
+# This command requires the Quarkus CLI to be installed on your system.
 quarkus dev
 ```
 
@@ -998,8 +998,6 @@ From the demo, it is evident that GraphiQL receives real-time updates via WebSoc
 ## Accessing the MinIO Console
 When you start the application in Dev mode, you can access the MinIO console to upload and download files or simply to check the status of the Object Store. To access the MinIO console, open your browser and visit the URL: <http://localhost:8080/q/dev-ui/extensions>, identify the box named Minio Client extension, and access the console from there.
 
-![Console di MinIO](src/main/docs/resources/images/box-ui-accesso-minio-console.jpg)
-
 ![Minio Client extension for accessing the MinIO Console](src/main/docs/resources/images/box-ui-accesso-minio-console.jpg)
 
 Figure 3 - Minio Client extension for accessing the MinIO Console
@@ -1069,20 +1067,18 @@ To build the container image in JVM mode, the reference Dockerfile is `Dockerfil
 The file [docker-compose.yml](src/main/docker/docker-compose.yml) was created to run the application in container mode. To run the application in container mode, execute the command:
 
 ```shell
-# Esportazione di APP_KEYSTORE_PATH per montare il keystore all'interno del container
-# e abilitare il protocollo HTTPS
+# Export the environment variable to enable and enable the HTTPS protocol
 export APP_KEYSTORE_PATH=$(pwd)/src/main/resources/app-keystore.p12
 
-# Avvio dell'applicazione via Podman Compose
-# Il comando deve essere eseguito dalla root directory del progetto
+# Start the application via Podman Compose
+# This command must be executed from the root directory of the project
 podman compose -f src/main/docker/docker-compose.yml up
 
-# Avvio dell'applicazione via Docker Compose
-# Il comando deve essere eseguito dalla root directory del progetto
+# Start the application via Docker Compose
+# This command must be executed from the root directory of the project
 docker-compose -f src/main/docker/docker-compose.yml up
 
-# Da Docker Compose V2, il compose è stato integrato direttamente in Docker
-# per cui è possibile eseguire il comando seguente.
+# From Docker Compose version 2.0, the command is as follows.
 docker compose -f src/main/docker/docker-compose.yml up
 ```
 
