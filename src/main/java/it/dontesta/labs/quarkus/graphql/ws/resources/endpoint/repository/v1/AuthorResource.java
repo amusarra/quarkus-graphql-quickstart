@@ -5,7 +5,6 @@
 package it.dontesta.labs.quarkus.graphql.ws.resources.endpoint.repository.v1;
 
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Author;
-import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
