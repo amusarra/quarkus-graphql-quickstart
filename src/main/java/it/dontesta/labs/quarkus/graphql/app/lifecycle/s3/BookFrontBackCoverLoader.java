@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 Antonio Musarra's Blog.
+ * SPDX-License-Identifier: MIT
+ */
 package it.dontesta.labs.quarkus.graphql.app.lifecycle.s3;
 
 import io.quarkus.logging.Log;
@@ -88,42 +92,6 @@ public class BookFrontBackCoverLoader {
     }
 
     /**
-     * Lists and uploads files from the specified resource folder to Minio.
-     *
-     * @param resourceImageFolder the path to the resource folder
-     * @param bucketName the name of the Minio bucket
-     * @param uploadedFiles the list to store the names of uploaded files
-     */
-    private void listAndUploadFiles(Path resourceImageFolder, String bucketName, List<String> uploadedFiles) {
-        try (var filesStream = Files.list(resourceImageFolder)) {
-            filesStream.forEach(file -> {
-                if (Files.isRegularFile(file)) {
-                    uploadFileToMinio(bucketName, file);
-                    uploadedFiles.add(file.getFileName().toString());
-                }
-            });
-        } catch (Exception e) {
-            Log.error("Error listing files in resource folder", e);
-        }
-    }
-
-    /**
-     * Uploads a file to Minio.
-     *
-     * @param bucketName the name of the Minio bucket
-     * @param file the path to the file to be uploaded
-     */
-    private void uploadFileToMinio(String bucketName, Path file) {
-        try (InputStream inputStream = Files.newInputStream(file)) {
-            minioService.uploadObject(bucketName, file.getFileName().toString(), inputStream.readAllBytes());
-            Log.debugf("Uploaded book front and back cover image: {%s} to Minio into bucket name {%s}", file.getFileName(),
-                    bucketName);
-        } catch (Exception e) {
-            Log.error("Error uploading book front and back cover image to Minio", e);
-        }
-    }
-
-    /**
      * Event listener method to handle the upload event and update Book entities.
      *
      * @param event the upload event
@@ -133,7 +101,8 @@ public class BookFrontBackCoverLoader {
         String bucketName = event.bucketName();
         List<String> uploadedFiles = event.uploadedFiles();
 
-        Log.infof("Received upload event for bucket name {%s} with uploaded files: {%s}", bucketName, uploadedFiles);
+        Log.infof("Received upload event for bucket name {%s} with uploaded files: {%s} to update the relate book", bucketName,
+                uploadedFiles);
 
         Map<String, String> coverPairs = uploadedFiles.stream()
                 .filter(fileName -> fileName.endsWith("front_cover.jpg") || fileName.endsWith("back_cover.jpg"))
@@ -172,6 +141,42 @@ public class BookFrontBackCoverLoader {
             }
 
         });
+    }
+
+    /**
+     * Lists and uploads files from the specified resource folder to Minio.
+     *
+     * @param resourceImageFolder the path to the resource folder
+     * @param bucketName the name of the Minio bucket
+     * @param uploadedFiles the list to store the names of uploaded files
+     */
+    private void listAndUploadFiles(Path resourceImageFolder, String bucketName, List<String> uploadedFiles) {
+        try (var filesStream = Files.list(resourceImageFolder)) {
+            filesStream.forEach(file -> {
+                if (Files.isRegularFile(file)) {
+                    uploadFileToMinio(bucketName, file);
+                    uploadedFiles.add(file.getFileName().toString());
+                }
+            });
+        } catch (Exception e) {
+            Log.error("Error listing files in resource folder", e);
+        }
+    }
+
+    /**
+     * Uploads a file to Minio.
+     *
+     * @param bucketName the name of the Minio bucket
+     * @param file the path to the file to be uploaded
+     */
+    private void uploadFileToMinio(String bucketName, Path file) {
+        try (InputStream inputStream = Files.newInputStream(file)) {
+            minioService.uploadObject(bucketName, file.getFileName().toString(), inputStream.readAllBytes());
+            Log.debugf("Uploaded book front and back cover image: {%s} to Minio into bucket name {%s}", file.getFileName(),
+                    bucketName);
+        } catch (Exception e) {
+            Log.error("Error uploading book front and back cover image to Minio", e);
+        }
     }
 
     /**

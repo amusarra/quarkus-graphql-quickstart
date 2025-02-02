@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 Antonio Musarra's Blog.
+ * SPDX-License-Identifier: MIT
+ */
 package it.dontesta.labs.quarkus.graphql.ws.graphql.api;
 
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Editor;
