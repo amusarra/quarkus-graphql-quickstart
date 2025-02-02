@@ -1129,6 +1129,10 @@ d0311857c285  docker.io/library/postgres:16                         postgres    
 386fdad9f4cb  docker.io/amusarra/quarkus-graphql-quickstart:latest                        24 hours ago  Up 5 seconds  0.0.0.0:8080->8080/tcp, 0.0.0.0:8443->8443/tcp, 0.0.0.0:9090->9090/tcp  quarkus-graphql
 ```
 
+Below is a asciinema recording showing the execution of the application via Docker Compose.
+
+[![asciicast](https://asciinema.org/a/oYeT9m9EThWaskjfFlNzY3M5x.svg)](https://asciinema.org/a/oYeT9m9EThWaskjfFlNzY3M5x)
+
 ## Guide to the services and extensions used
 
 - ArC ([guide](https://quarkus.io/guides/cdi-reference)): Build time CDI dependency injection
