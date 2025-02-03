@@ -88,7 +88,7 @@ To run or develop the project, make sure you have the following tools installed.
 * JDK 21+, GraalVM 21+ (for native build)
 * Container tools like Docker or Podman
 * Apache Maven 3.9.9 (optional if using the Maven wrapper integrated with the sample project)
-* Quarkus CLI 3.17 (optional, but recommended)
+* Quarkus CLI 3.18.x (optional, but recommended)
 
 ## Quickstart
 
