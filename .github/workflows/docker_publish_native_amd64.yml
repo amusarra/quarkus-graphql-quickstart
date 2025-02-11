@@ -4,11 +4,11 @@ name: CI Docker build native amd64
 on:
   # Trigger analysis when pushing in master or pull requests, and when creating
   # a pull request.
-  push:
-    branches:
-      - main
-  release:
-    types: [ published ]
+#  push:
+#    branches:
+#      - main
+#  release:
+#    types: [ published ]
 
 jobs:
   docker:
