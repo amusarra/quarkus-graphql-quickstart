@@ -1102,25 +1102,32 @@ The created images are available on Docker Hub at the following link: https://hu
 
 To build the container image in JVM mode, the reference Dockerfile is `Dockerfile.jvm` (in `src/main/docker/Dockerfile.jvm`) and for the Native mode container image, the reference Dockerfile is `Dockerfile.native` (in `src/main/docker/Dockerfile.native`).
 
-The file [docker-compose.yml](src/main/docker/docker-compose.yml) was created to run the application in container mode. To run the application in container mode, execute the command:
+The file [docker-compose.yml](src/main/docker/docker-compose.yml) was created to run the application in container mode. To run the application in container mode, execute the following commands:
 
 ```shell
 # Export the environment variable to enable and enable the HTTPS protocol
 export APP_KEYSTORE_PATH=$(pwd)/src/main/resources/app-keystore.p12
+```
 
+```shell
 # Start the application via Podman Compose
 # This command must be executed from the root directory of the project
 podman compose -f src/main/docker/docker-compose.yml up
+```
 
+```shell
 # Start the application via Docker Compose
 # This command must be executed from the root directory of the project
 docker-compose -f src/main/docker/docker-compose.yml up
+```
 
+```shell
 # From Docker Compose version 2.0, the command is as follows.
 docker compose -f src/main/docker/docker-compose.yml up
 ```
 
 Once the stack of services configured in `docker-compose.yml` has started, the application will be available at: [http://localhost:8080](http://localhost:8080) and [https://localhost:8443](https://localhost:8443). The PostgreSQL database is available on the standard port 5432, while MinIO is available on port 9090. You can see the status of the service stack by running the `docker ps` or `podman ps` command. Below is an example of the command output.
+
 
 ```shell
 CONTAINER ID  IMAGE                                                 COMMAND               CREATED       STATUS        PORTS                                                                   NAMES
@@ -1129,9 +1136,33 @@ d0311857c285  docker.io/library/postgres:16                         postgres    
 386fdad9f4cb  docker.io/amusarra/quarkus-graphql-quickstart:latest                        24 hours ago  Up 5 seconds  0.0.0.0:8080->8080/tcp, 0.0.0.0:8443->8443/tcp, 0.0.0.0:9090->9090/tcp  quarkus-graphql
 ```
 
-Below is a asciinema recording showing the execution of the application via Docker Compose.
+Below is an asciinema recording showing the execution of the application via Docker Compose.
 
 [![asciicast](https://asciinema.org/a/oYeT9m9EThWaskjfFlNzY3M5x.svg)](https://asciinema.org/a/oYeT9m9EThWaskjfFlNzY3M5x)
+
+### Running native mode
+To run the application in native mode, you can use the `docker-compose-native-[arm64|amd64].yml` file. This file is a copy of the `docker-compose.yml` file, but with the image reference changed to the native mode image. To run the application in native mode, execute the commands:
+
+```shell
+# Export the environment variable to enable and enable the HTTPS protocol
+export APP_KEYSTORE_PATH=$(pwd)/src/main/resources/app-keystore.p12
+```
+
+```shell
+# Start the native application ARM64 via Podman Compose
+# This command must be executed from the root directory of the project
+podman compose -f src/main/docker/docker-compose-native-arm64.yml up
+```
+
+```shell
+# Start the native application AMD64 via Podman Compose
+# This command must be executed from the root directory of the project
+podman compose -f src/main/docker/docker-compose-native-amd64.yml up
+```
+
+Below is an asciiinema recording showing the execution of the application in native mode via Podman Compose.
+
+[![asciicast](https://asciinema.org/a/ex9EKhcENPFljm7AEJjLMw5IN.svg)](https://asciinema.org/a/ex9EKhcENPFljm7AEJjLMw5IN)
 
 ## Guide to the services and extensions used
 
