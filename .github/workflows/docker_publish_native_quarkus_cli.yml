@@ -28,12 +28,13 @@ jobs:
         run: echo "REPO_NAME=$(echo ${{ github.repository }} | cut -d '/' -f 2)" >> $GITHUB_ENV
       - name: Git ref name trigger
         run: echo ${{ github.ref_name }}
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@main
         with:
-          java-version: '21'
-          distribution: 'corretto'
-          cache: 'maven'
+          java-version: '22-ea'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.TOKEN_GITHUB }}
+          native-image-job-reports: 'true'
       - name: Install JBang and Quarkus CLI
         run: |
           curl -Ls https://sh.jbang.dev | bash -s - trust add https://repo1.maven.org/maven2/io/quarkus/quarkus-cli/
