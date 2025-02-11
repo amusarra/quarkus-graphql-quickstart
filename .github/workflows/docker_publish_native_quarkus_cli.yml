@@ -62,4 +62,13 @@ jobs:
           -Dquarkus.container-image.push=true \
           -Dquarkus.container-image.registry=docker.io \
           -Dquarkus.container-image.username=${{ secrets.DOCKER_USERNAME }} \
-          -Dquarkus.container-image.image=${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}-native:${{ github.ref_name }}-${{ matrix.current_platform }}
+          -Dquarkus.container-image.image=${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}-native:${{ github.ref_name }}-${{ matrix.current_platform }} \
+          -Dquarkus.container-image.labels."org.opencontainers.image.title"="${{ github.event.repository.name }}" \
+          -Dquarkus.container-image.labels."org.opencontainers.image.description"="A native image built with Quarkus CLI" \
+          -Dquarkus.container-image.labels."org.opencontainers.image.url"="https://github.com/${{ github.repository }}" \
+          -Dquarkus.container-image.labels."org.opencontainers.image.source"="https://github.com/${{ github.repository }}" \
+          -Dquarkus.container-image.labels."org.opencontainers.image.version"="${{ github.ref_name }}" \
+          -Dquarkus.container-image.labels."org.opencontainers.image.created"="${{ steps.prep.outputs.created }}" \
+          -Dquarkus.container-image.labels."org.opencontainers.image.revision"="${{ github.sha }}" \
+          -Dquarkus.container-image.labels."org.opencontainers.image.authors"="Antonio Musarra <antonio.musarra@gmail.com>" \
+          -Dquarkus.container-image.labels."org.opencontainers.image.licenses"="MIT"
