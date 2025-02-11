@@ -1,4 +1,4 @@
-name: CI build-publish container native image with Quarkus CLI
+name: CI build-publish native image with Quarkus CLI
 
 on:
   push:
@@ -13,21 +13,16 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest, ubuntu-24.04-arm ]
-        arch: [ amd64, arm64 ]
+        os: [ 'ubuntu-24.04', 'ubuntu-24.04-arm' ]
         include:
-          - os: ubuntu-latest
-            arch: amd64
+          - os: ubuntu-24.04
+            current_platform: 'amd64'
           - os: ubuntu-24.04-arm
-            arch: arm64
+            current_platform: 'arm64'
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Get repo name
-        run: echo "REPO_NAME=$(echo ${{ github.repository }} | cut -d '/' -f 2)" >> $GITHUB_ENV
-      - name: Git ref name trigger
-        run: echo ${{ github.ref_name }}
       - name: Set up GraalVM
         uses: graalvm/setup-graalvm@main
         with:
@@ -54,4 +49,4 @@ jobs:
           -Dquarkus.container-image.push=true \
           -Dquarkus.container-image.registry=docker.io \
           -Dquarkus.container-image.username=${{ secrets.DOCKER_USERNAME }} \
-          -Dquarkus.container-image.image=${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }}:${{ github.ref_name }}-${{ matrix.arch }}
+          -Dquarkus.container-image.image=${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }}-${{ matrix.arch }}-native
