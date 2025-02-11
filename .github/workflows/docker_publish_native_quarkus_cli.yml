@@ -43,7 +43,8 @@ jobs:
       - name: Verify Quarkus CLI installation
         run: quarkus --version
       - name: Build Native Image
-        run: quarkus build --native \
+        run: |
+          quarkus build --native \
           -Dquarkus.native.container-build=false \
           -Dquarkus.container-image.username=${{ secrets.DOCKER_USERNAME }} \
           -Dquarkus.container-image.tag=${{ github.ref_name }}-${{ matrix.arch }}
