@@ -62,4 +62,4 @@ jobs:
           -Dquarkus.container-image.push=true \
           -Dquarkus.container-image.registry=docker.io \
           -Dquarkus.container-image.username=${{ secrets.DOCKER_USERNAME }} \
-          -Dquarkus.container-image.image=${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }}-${{ matrix.arch }}-native
+          -Dquarkus.container-image.image=${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }}-${{ matrix.current_platform }}-native
