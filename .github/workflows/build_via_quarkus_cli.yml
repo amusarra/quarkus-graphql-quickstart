@@ -25,11 +25,15 @@ jobs:
           cache: maven
 
       # Install Quarkus CLI using JBang
-      - name: Install Quarkus CLI
+      - name: Install JBang and Quarkus CLI
         run: |
           curl -Ls https://sh.jbang.dev | bash -s - trust add https://repo1.maven.org/maven2/io/quarkus/quarkus-cli/
           curl -Ls https://sh.jbang.dev | bash -s - app install --fresh --force quarkus@quarkusio
-          exec $SHELL
+          echo "export PATH=$PATH:/home/runner/.jbang/bin" >> $GITHUB_ENV
+
+        # Verify Quarkus CLI installation
+      - name: Verify Quarkus CLI installation
+        run: quarkus --version
 
       # Build the project using Quarkus CLI
       - name: Build with Quarkus CLI
