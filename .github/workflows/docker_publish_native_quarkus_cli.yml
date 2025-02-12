@@ -54,6 +54,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
+      # Build the native artifact
+      - name: Build Native Artifact
+        run: |
+            quarkus build --native
+
       # Build the native image and push the Docker image
       - name: Build Native Image and Push Docker Image
         run: |
