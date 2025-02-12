@@ -8,6 +8,7 @@ import io.smallrye.mutiny.Uni;
 import it.dontesta.labs.quarkus.graphql.exception.MinioServiceException;
 import it.dontesta.labs.quarkus.graphql.s3.service.MinioService;
 import it.dontesta.labs.quarkus.graphql.ws.dto.FileDTO;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.Base64;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.eclipse.microprofile.graphql.Name;
 import org.eclipse.microprofile.graphql.Query;
 
 @GraphQLApi
+@ApplicationScoped
 public class FileGraphQL {
 
     @Inject

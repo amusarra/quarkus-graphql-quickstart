@@ -3,9 +3,9 @@
 [![Keep a Changelog v1.1.0 badge](https://img.shields.io/badge/changelog-Keep%20a%20Changelog%20v1.1.0-%23E05735)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![code of conduct](https://img.shields.io/badge/Conduct-Contributor%20Covenant%202.1-purple.svg)](CODE_OF_CONDUCT.md)
-![Build with Maven](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/build_via_maven.yml/badge.svg)
+![Build with Maven](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/build_via_quarkus_cli.yml/badge.svg)
 ![CI Docker build](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish.yml/badge.svg)
-![CI Docker build native amd64](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish_native_amd64.yml/badge.svg)
+![CI Docker build native amd64](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish_native_quarkus_cli.yml/badge.svg)
 
 This project is a demonstration of a Quarkus application that exposes data through a traditional RESTful API (`quarkus-rest`) and a GraphQL API (`quarkus-smallrye-graphql`). The project uses Hibernate ORM with Panache (`quarkus-hibernate-orm-panache`) for data persistence and includes configurations for H2 database (for development), PostgreSQL (for production profiles), and MinIO as an S3 Object Store (`io.quarkiverse.minio:quarkus-minio`).
 
@@ -1128,6 +1128,7 @@ docker compose -f src/main/docker/docker-compose.yml up
 
 Once the stack of services configured in `docker-compose.yml` has started, the application will be available at: [http://localhost:8080](http://localhost:8080) and [https://localhost:8443](https://localhost:8443). The PostgreSQL database is available on the standard port 5432, while MinIO is available on port 9090. You can see the status of the service stack by running the `docker ps` or `podman ps` command. Below is an example of the command output.
 
+The Quarkus application will be started when the PostgreSQL and MinIO services are available (see the `depends_on` and the `healthcheck`). 
 
 ```shell
 CONTAINER ID  IMAGE                                                 COMMAND               CREATED       STATUS        PORTS                                                                   NAMES
@@ -1163,6 +1164,8 @@ podman compose -f src/main/docker/docker-compose-native-amd64.yml up
 Below is an asciiinema recording showing the execution of the application in native mode via Podman Compose.
 
 [![asciicast](https://asciinema.org/a/ex9EKhcENPFljm7AEJjLMw5IN.svg)](https://asciinema.org/a/ex9EKhcENPFljm7AEJjLMw5IN)
+
+The Quarkus application will be started when the PostgreSQL and MinIO services are available (see the `depends_on` and the `healthcheck`).
 
 ## Guide to the services and extensions used
 

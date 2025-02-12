@@ -10,8 +10,10 @@ services:
     image: amusarra/quarkus-graphql-quickstart-native:latest-arm64
     container_name: quarkus-graphql-native-arm64
     depends_on:
-      - postgres
-      - minio
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
     volumes:
       - ${APP_KEYSTORE_PATH}:/security/keystore/app-keystore.p12
     environment:
@@ -35,6 +37,11 @@ services:
       POSTGRES_DB: quarkus
       POSTGRES_USER: quarkus
       POSTGRES_PASSWORD: quarkus
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U quarkus"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - "5432:5432"
     volumes:
@@ -47,6 +54,11 @@ services:
     environment:
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=minioadmin
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - "9000:9000"
       - "9001:9001"
