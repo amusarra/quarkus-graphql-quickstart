@@ -31,7 +31,7 @@ jobs:
       - name: Set up GraalVM
         uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '21'
+          java-version: '21.0.2'
           distribution: 'graalvm'
           github-token: ${{ secrets.TOKEN_GITHUB }}
           native-image-job-reports: 'true'
@@ -58,7 +58,7 @@ jobs:
       - name: Build Native Image and Push Docker Image
         run: |
           quarkus image build --native \
-          -Dquarkus.native.container-build=true \
+          -Dquarkus.native.container-build=false \
           -Dquarkus.container-image.push=true \
           -Dquarkus.container-image.registry=docker.io \
           -Dquarkus.container-image.username=${{ secrets.DOCKER_USERNAME }} \
