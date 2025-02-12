@@ -58,7 +58,7 @@ jobs:
       - name: Build Native Image and Push Docker Image
         run: |
           quarkus image build --native \
-          -Dquarkus.native.container-build=false \
+          -Dquarkus.native.container-build=true \
           -Dquarkus.container-image.push=true \
           -Dquarkus.container-image.registry=docker.io \
           -Dquarkus.container-image.username=${{ secrets.DOCKER_USERNAME }} \
