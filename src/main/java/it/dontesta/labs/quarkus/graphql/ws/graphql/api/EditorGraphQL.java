@@ -5,6 +5,7 @@
 package it.dontesta.labs.quarkus.graphql.ws.graphql.api;
 
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Editor;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 import org.eclipse.microprofile.graphql.*;
@@ -12,6 +13,7 @@ import org.eclipse.microprofile.graphql.*;
 import java.util.List;
 
 @GraphQLApi
+@ApplicationScoped
 public class EditorGraphQL {
 
     @Query
