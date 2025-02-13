@@ -1100,9 +1100,15 @@ After creation, you can run your native executable with:
 ```
 
 ## Running the application via Docker Compose and Podman Compose
-The container images of the application are created through two GitHub actions defined in the files: `docker_publish.yml` and `docker_publish_native_amd64.yml` within the project, directory `.github/workflows`.
+The container images of the application are created through two GitHub actions defined in the files in the `.github/workflows` directory:
 
-The created images are available on Docker Hub at the following link: https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart/tags.
+1. `docker_publish.yml` builds the container image in JVM mode for both ARM64 and AMD64 architectures and publishes it to Docker Hub.
+2. `docker_publish_native_quarkus_cli.yml` builds the container image in Native mode for both ARM64 and AMD64 architectures and publishes it to Docker Hub. Using the Quarkus CLI, the native image is built and then packaged into a container image.
+
+The created images are available on Docker Hub at the following link: 
+
+1. JVM Mode - https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart/tags
+2. Native Mode - https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart-native/tags
 
 To build the container image in JVM mode, the reference Dockerfile is `Dockerfile.jvm` (in `src/main/docker/Dockerfile.jvm`) and for the Native mode container image, the reference Dockerfile is `Dockerfile.native` (in `src/main/docker/Dockerfile.native`).
 
