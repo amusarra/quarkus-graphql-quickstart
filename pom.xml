@@ -13,6 +13,7 @@
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.version>3.18.2</quarkus.platform.version>
+<!--        <quarkus.native.additional-build-args>-H:IncludeResources=data/book/images/*.jpg</quarkus.native.additional-build-args>-->
         <quarkus.minio.version>3.7.7</quarkus.minio.version>
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.5.0</surefire-plugin.version>

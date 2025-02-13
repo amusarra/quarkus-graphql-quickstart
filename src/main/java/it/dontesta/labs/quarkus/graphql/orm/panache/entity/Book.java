@@ -41,10 +41,10 @@ public class Book extends PanacheEntity {
     public String genre;
 
     @Column(length = 512)
-    public String frontCorverImageUrl;
+    public String frontCoverImageUrl;
 
     @Column(length = 512)
-    public String backCorverImageUrl;
+    public String backCoverImageUrl;
 
     @ElementCollection
     @CollectionTable(name = "book_languages")

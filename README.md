@@ -3,9 +3,9 @@
 [![Keep a Changelog v1.1.0 badge](https://img.shields.io/badge/changelog-Keep%20a%20Changelog%20v1.1.0-%23E05735)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![code of conduct](https://img.shields.io/badge/Conduct-Contributor%20Covenant%202.1-purple.svg)](CODE_OF_CONDUCT.md)
-![Build with Maven](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/build_via_maven.yml/badge.svg)
+![Build with Maven](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/build_via_quarkus_cli.yml/badge.svg)
 ![CI Docker build](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish.yml/badge.svg)
-![CI Docker build native amd64](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish_native_amd64.yml/badge.svg)
+![CI Docker build native amd64](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish_native_quarkus_cli.yml/badge.svg)
 
 This project is a demonstration of a Quarkus application that exposes data through a traditional RESTful API (`quarkus-rest`) and a GraphQL API (`quarkus-smallrye-graphql`). The project uses Hibernate ORM with Panache (`quarkus-hibernate-orm-panache`) for data persistence and includes configurations for H2 database (for development), PostgreSQL (for production profiles), and MinIO as an S3 Object Store (`io.quarkiverse.minio:quarkus-minio`).
 
@@ -85,10 +85,10 @@ Table 1 - Main endpoints of the Quarkus GraphQL application
 To run or develop the project, make sure you have the following tools installed.
 
 * Git 2.33+
-* JDK 21+, GraalVM 21+ (for native build)
+* JDK 21+, [GraalVM](https://www.graalvm.org/downloads/) 21+ (for native build)
 * Container tools like Docker or Podman
 * Apache Maven 3.9.9 (optional if using the Maven wrapper integrated with the sample project)
-* Quarkus CLI 3.18.x (optional, but recommended)
+* [Quarkus CLI](https://quarkus.io/guides/cli-tooling) 3.18.x (optional, but recommended)
 
 ## Quickstart
 
@@ -106,7 +106,7 @@ To clone the project's git repository, run the command:
 git clone https://github.com/amusarra/quarkus-graphql-quickstart.git
 ```
 
-Per avviare l'applicazione in modalità sviluppo, esegui il comando:
+To start the application in development mode, use one of the following methods:
 
 ```shell
 # Start the application in development mode
@@ -133,10 +133,10 @@ quarkus dev
 
 To test the GraphQL and REST APIs, open your browser and visit the following URLs:
 
-* GraphQL API using the GraphiQL UI: <http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-ui>
+* GraphQL API using the [GraphiQL UI](https://github.com/graphql/graphiql): <http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-ui>
 * REST API using the Swagger UI: <http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-openapi/swagger-ui>
 
-Using the [GraphiQL UI](https://github.com/graphql/graphiql), you can execute queries and [mutations](https://graphql.org/learn/mutations/) to retrieve and modify database data. Below is a demo example of how to execute GraphQL queries to retrieve and create books, authors, and publishers, as well as create and retrieve S3 objects from the MinIO Object Store.
+Using the GraphiQL UI, you can execute queries and [mutations](https://graphql.org/learn/mutations/) to retrieve and modify database data. Below is a demo example of how to execute GraphQL queries to retrieve and create books, authors, and publishers, as well as create and retrieve S3 objects from the MinIO Object Store.
 
 ![Demo di esempio su come eseguire query GraphQL](src/main/docs/resources/images/demo-graphql-ui.gif)
 
@@ -168,6 +168,8 @@ query getBook {
     id
     title
     subTitle
+    frontCoverImageUrl
+    backCoverImageUrl
     pages
     summary
     languages
@@ -293,6 +295,8 @@ curl -k -X POST http://localhost:8080/api/graphql \
           genre
           pages
           summary
+          frontCoverImageUrl
+          frontCoverImageUrl
           languages
           formats
           authors {
@@ -421,7 +425,7 @@ At startup, the application, load the data from the `sample_data.sql` file locat
 
 At startup, the application also creates the MinIO bucket `book-cover` to store the files uploaded to MinIO. The method `BookFrontBackCoverLoader#onBookFrontCoverUpload` is an event listener that triggers on application startup to upload book front and back cover images to Minio. It uses the @Observes annotation to listen for the StartupEvent.
 
-After the upload files to MinIO is completed, the call `uploadEvent.fire(new UploadEvent(bucketName, uploadedFiles))` fire an UploadEvent to notify the listeners that the files have been uploaded. The `uploadEvent.fire` method is called with a new instance of the `UploadEvent` class, which contains the `bucketName` and the list of `uploadedFiles`. This is done to trigger any event listeners that are observing the UploadEvent. See the method `BookFrontBackCoverLoader.onUploadEvent(@Observes UploadEvent event)`.
+After the upload files to MinIO is completed, the call `uploadEvent.fire(new UploadEvent(bucketName, uploadedFiles))` fire an UploadEvent to notify the listeners that the files have been uploaded. The `uploadEvent.fire` method is called with a new instance of the `UploadEvent` class, which contains the `bucketName` and the list of `uploadedFiles`. This is done to trigger any event listeners that are observing the UploadEvent. See the method `BookFrontBackCoverLoader#onUploadEvent(@Observes UploadEvent event)`.
 
 When you start application in development mode, should see the following output in the console.
 
@@ -772,8 +776,8 @@ query {
       node {
         id
         title
-        frontCorverImageUrl
-        backCorverImageUrl
+        frontCoverImageUrl
+        backCoverImageUrl
         authors {
           firstName
           lastName
@@ -801,8 +805,8 @@ The expected output will be similar to the one shown below; where `edges` contai
           "node": {
             "id": 4,
             "title": "Enhanced multimedia interface",
-            "frontCorverImageUrl": null,
-            "backCorverImageUrl": null,
+            "frontCoverImageUrl": null,
+            "backCoverImageUrl": null,
             "authors": [
               {
                 "firstName": "David",
@@ -841,8 +845,8 @@ The expected output will be similar to the one shown below; where `edges` contai
           "node": {
             "id": 6,
             "title": "Decentralized systems integration",
-            "frontCorverImageUrl": null,
-            "backCorverImageUrl": null,
+            "frontCoverImageUrl": null,
+            "backCoverImageUrl": null,
             "authors": [
               {
                 "firstName": "Christopher",
@@ -878,7 +882,7 @@ The following output shows the query to retrieve the next page of books using th
           "node": {
             "id": 16,
             "title": "Machine Learning Algorithms",
-            "frontCorverImageUrl": "http://localhost:39869/book-cover/9780596805190_machine_learning_algorithms_front_cover.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioaccess%2F20250201%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250201T233159Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=8015c92ed39ca24596dff47d9dadb5f31d85e297b3a802b2914d90e6b64b2120",
+            "frontCoverImageUrl": "http://localhost:39869/book-cover/9780596805190_machine_learning_algorithms_front_cover.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioaccess%2F20250201%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250201T233159Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=8015c92ed39ca24596dff47d9dadb5f31d85e297b3a802b2914d90e6b64b2120",
             "backCorverImageUrl": "http://localhost:39869/book-cover/9780596805190_machine_learning_algorithms_back_cover.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioaccess%2F20250201%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250201T233159Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=4542ade0ca4a540b39deaf834c4e65f20637540de527cd0a10ef782943faeffd",
             "authors": [],
             "isbn": "9780596805190"
@@ -965,7 +969,7 @@ Below is the implementation of the steps described above. The complete code is a
 After creating a new book, we send the book creation event to the `processor` using `processor.onNext(book)`. This notifies clients subscribed to the `bookCreated` subscription whenever a new book is created. The `bookCreated` method returns a `Multi` stream of books, representing the books created in real-time.
 
 ### Testing Subscriptions
-To test subscriptions, we can use a WebSocket client like [GraphiQL](http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-ui) or [Apollo Client](https://www.apollographql.com/docs/react/get-started/). In this example, we will use GraphiQL to test subscriptions since it is already integrated with SmallRye GraphQL.
+To test subscriptions, we can use a WebSocket client like [GraphiQL](http://localhost:8080/q/dev-ui/io.quarkus.quarkus-smallrye-graphql/graphql-ui) or [Apollo Client](https://www.apollographql.com/docs/react/get-started/). In this example, we will use GraphiQL to test subscriptions since it is already integrated with SmallRye GraphQL. Another client that can be used is [Altair GraphQL Client](https://altairgraphql.dev/).
 
 To test subscriptions, follow these steps:
 1. Start the application in Dev mode with the command `./mvnw quarkus:dev` or `quarkus dev`.
@@ -1128,6 +1132,7 @@ docker compose -f src/main/docker/docker-compose.yml up
 
 Once the stack of services configured in `docker-compose.yml` has started, the application will be available at: [http://localhost:8080](http://localhost:8080) and [https://localhost:8443](https://localhost:8443). The PostgreSQL database is available on the standard port 5432, while MinIO is available on port 9090. You can see the status of the service stack by running the `docker ps` or `podman ps` command. Below is an example of the command output.
 
+The Quarkus application will be started when the PostgreSQL and MinIO services are available (see the `depends_on` and the `healthcheck`). 
 
 ```shell
 CONTAINER ID  IMAGE                                                 COMMAND               CREATED       STATUS        PORTS                                                                   NAMES
@@ -1163,6 +1168,8 @@ podman compose -f src/main/docker/docker-compose-native-amd64.yml up
 Below is an asciiinema recording showing the execution of the application in native mode via Podman Compose.
 
 [![asciicast](https://asciinema.org/a/ex9EKhcENPFljm7AEJjLMw5IN.svg)](https://asciinema.org/a/ex9EKhcENPFljm7AEJjLMw5IN)
+
+The Quarkus application will be started when the PostgreSQL and MinIO services are available (see the `depends_on` and the `healthcheck`).
 
 ## Guide to the services and extensions used
 
