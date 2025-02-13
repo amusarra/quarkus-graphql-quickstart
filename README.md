@@ -1057,7 +1057,7 @@ The application can be packaged using the command:
 This command generates the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
 Note that this is not an über-jar, as the dependencies are copied into the `target/quarkus-app/lib/` directory.
 
-> If you want run the application via jar remember that you need a database and MinIO running.
+> If you want to run the application via jar remember that you need a database and MinIO running.
 > You can see the docker-compose file in the `src/main/docker` directory for more information
 > on how to start the services.
 
@@ -1107,12 +1107,12 @@ The container images of the application are created through two GitHub actions d
 
 The created images are available on Docker Hub at the following link: 
 
-1. JVM Mode - https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart/tags
-2. Native Mode - https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart-native/tags
+1. Container Image - JVM Mode - https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart/tags
+2. Container Image - Native Mode - https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart-native/tags
 
 To build the container image in JVM mode, the reference Dockerfile is `Dockerfile.jvm` (in `src/main/docker/Dockerfile.jvm`) and for the Native mode container image, the reference Dockerfile is `Dockerfile.native` (in `src/main/docker/Dockerfile.native`).
 
-The file [docker-compose.yml](src/main/docker/docker-compose.yml) was created to run the application in container mode. To run the application in container mode, execute the following commands:
+The file [docker-compose.yml](src/main/docker/docker-compose.yml) was created to run the application (JVM mode) in container environment. To run the application in container environment, execute the following commands:
 
 ```shell
 # Export the environment variable to enable and enable the HTTPS protocol
