@@ -136,8 +136,8 @@ public class BookFrontBackCoverLoader {
                 String frontCoverUrl = frontCoverDetails.get("downloadUrl").toString();
                 String backCoverUrl = backCoverDetails.get("downloadUrl").toString();
 
-                book.frontCorverImageUrl = frontCoverUrl;
-                book.backCorverImageUrl = backCoverUrl;
+                book.frontCoverImageUrl = frontCoverUrl;
+                book.backCoverImageUrl = backCoverUrl;
 
                 // Update the Book entity
                 entityManager.persist(book);
