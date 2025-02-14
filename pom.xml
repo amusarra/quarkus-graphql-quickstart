@@ -13,9 +13,11 @@
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.version>3.18.2</quarkus.platform.version>
-<!--        <quarkus.native.additional-build-args>-H:IncludeResources=data/book/images/*.jpg</quarkus.native.additional-build-args>-->
         <quarkus.minio.version>3.7.7</quarkus.minio.version>
         <skipITs>true</skipITs>
+        <sonar.coverage.jacoco.xmlReportPaths>target/jacoco-report/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.organization>amusarra-github</sonar.organization>
         <surefire-plugin.version>3.5.0</surefire-plugin.version>
     </properties>
 
@@ -84,6 +86,11 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-info</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jacoco</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>

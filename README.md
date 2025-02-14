@@ -3,6 +3,7 @@
 [![Keep a Changelog v1.1.0 badge](https://img.shields.io/badge/changelog-Keep%20a%20Changelog%20v1.1.0-%23E05735)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![code of conduct](https://img.shields.io/badge/Conduct-Contributor%20Covenant%202.1-purple.svg)](CODE_OF_CONDUCT.md)
+
 ![Build with Maven](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/build_via_quarkus_cli.yml/badge.svg)
 ![CI Docker build](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish.yml/badge.svg)
 ![CI Docker build native amd64](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish_native_quarkus_cli.yml/badge.svg)
@@ -1057,7 +1058,7 @@ The application can be packaged using the command:
 This command generates the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
 Note that this is not an über-jar, as the dependencies are copied into the `target/quarkus-app/lib/` directory.
 
-> If you want run the application via jar remember that you need a database and MinIO running.
+> If you want to run the application via jar remember that you need a database and MinIO running.
 > You can see the docker-compose file in the `src/main/docker` directory for more information
 > on how to start the services.
 
@@ -1100,13 +1101,19 @@ After creation, you can run your native executable with:
 ```
 
 ## Running the application via Docker Compose and Podman Compose
-The container images of the application are created through two GitHub actions defined in the files: `docker_publish.yml` and `docker_publish_native_amd64.yml` within the project, directory `.github/workflows`.
+The container images of the application are created through two GitHub actions defined in the files in the `.github/workflows` directory:
 
-The created images are available on Docker Hub at the following link: https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart/tags.
+1. `docker_publish.yml` builds the container image in JVM mode for both ARM64 and AMD64 architectures and publishes it to Docker Hub.
+2. `docker_publish_native_quarkus_cli.yml` builds the container image in Native mode for both ARM64 and AMD64 architectures and publishes it to Docker Hub. Using the Quarkus CLI, the native image is built and then packaged into a container image.
+
+The created images are available on Docker Hub at the following link: 
+
+1. Container Image - JVM Mode - https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart/tags
+2. Container Image - Native Mode - https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart-native/tags
 
 To build the container image in JVM mode, the reference Dockerfile is `Dockerfile.jvm` (in `src/main/docker/Dockerfile.jvm`) and for the Native mode container image, the reference Dockerfile is `Dockerfile.native` (in `src/main/docker/Dockerfile.native`).
 
-The file [docker-compose.yml](src/main/docker/docker-compose.yml) was created to run the application in container mode. To run the application in container mode, execute the following commands:
+The file [docker-compose.yml](src/main/docker/docker-compose.yml) was created to run the application (JVM mode) in container environment. To run the application in container environment, execute the following commands:
 
 ```shell
 # Export the environment variable to enable and enable the HTTPS protocol
