@@ -5,8 +5,6 @@
 package it.dontesta.labs.quarkus.graphql.ws.graphql.api;
 
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.response.Response;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
