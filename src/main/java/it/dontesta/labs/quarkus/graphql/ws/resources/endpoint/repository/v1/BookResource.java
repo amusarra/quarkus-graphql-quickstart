@@ -34,7 +34,11 @@ public class BookResource {
     @GET
     @Path("/{id}")
     public Book get(@PathParam("id") Long id) {
-        return Book.findById(id);
+        Book book = Book.findById(id);
+        if (book == null) {
+            throw new NotFoundException();
+        }
+        return book;
     }
 
     @POST
@@ -65,6 +69,9 @@ public class BookResource {
         entity.title = book.title;
         entity.editor = book.editor;
         entity.authors = book.authors;
+        entity.languages = book.languages;
+        entity.formats = book.formats;
+        entity.keywords = book.keywords;
         return entity;
     }
 

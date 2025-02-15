@@ -72,7 +72,7 @@ class MinioServiceTest {
     }
 
     @Test
-    @Order(1)
+    @Order(2)
     void bucketExistsReturnsTrueForExistingBucket() {
         String bucketName = "test-bucket";
         minioService.makeBucket(bucketName);
@@ -112,6 +112,44 @@ class MinioServiceTest {
         minioService.removeObject(bucketName, objectName);
 
         assertThrows(
-            MinioServiceException.class, () -> minioService.getObject(bucketName, objectName));
+                MinioServiceException.class, () -> minioService.getObject(bucketName, objectName));
+    }
+
+    @Test
+    @Order(1)
+    void removeObjectThrowsExceptionWithCorrectMessage() {
+        String bucketName = "test-bucket";
+        String objectName = "non-existing-object";
+
+        MinioServiceException exception = assertThrows(
+                MinioServiceException.class,
+                () -> minioService.removeObject(bucketName, objectName));
+
+        assertEquals("Failed to remove object from MinIO", exception.getMessage());
+    }
+
+    @Test
+    void getObjectDetailsThrowsExceptionWithCorrectMessage() {
+        String bucketName = "test-bucket";
+        String objectName = "non-existing-object";
+
+        MinioServiceException exception = assertThrows(
+                MinioServiceException.class,
+                () -> minioService.getObjectDetails(bucketName, objectName));
+
+        assertEquals("Failed to retrieve object details from MinIO", exception.getMessage());
+    }
+
+    @Test
+    void getObjectAsBase64ThrowsExceptionWithCorrectMessage() {
+        String bucketName = "test-bucket";
+        String objectName = "non-existing-object";
+
+        MinioServiceException exception = assertThrows(
+            MinioServiceException.class,
+            () -> minioService.getObjectAsBase64(bucketName, objectName)
+        );
+
+        assertEquals("Failed to retrieve object from MinIO", exception.getMessage());
     }
 }

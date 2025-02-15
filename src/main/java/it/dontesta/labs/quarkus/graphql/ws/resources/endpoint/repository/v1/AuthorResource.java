@@ -5,6 +5,7 @@
 package it.dontesta.labs.quarkus.graphql.ws.resources.endpoint.repository.v1;
 
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Author;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -24,10 +25,15 @@ public class AuthorResource {
     @GET
     @Path("/{id}")
     public Author get(@PathParam("id") Long id) {
-        return Author.findById(id);
+        Author author = Author.findById(id);
+        if (author == null) {
+            throw new NotFoundException();
+        }
+        return author;
     }
 
     @POST
+    @Transactional
     public Response create(Author author) {
         author.persist();
         return Response.created(URI.create("/authors/" + author.id)).build();
@@ -35,6 +41,7 @@ public class AuthorResource {
 
     @PUT
     @Path("/{id}")
+    @Transactional
     public Author update(@PathParam("id") Long id, Author author) {
         Author existingAuthor = Author.findById(id);
         if (existingAuthor == null) {
@@ -52,6 +59,7 @@ public class AuthorResource {
 
     @DELETE
     @Path("/{id}")
+    @Transactional
     public void delete(@PathParam("id") Long id) {
         Author author = Author.findById(id);
         if (author == null) {

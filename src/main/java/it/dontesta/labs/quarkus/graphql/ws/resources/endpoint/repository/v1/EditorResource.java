@@ -5,6 +5,7 @@
 package it.dontesta.labs.quarkus.graphql.ws.resources.endpoint.repository.v1;
 
 import it.dontesta.labs.quarkus.graphql.orm.panache.entity.Editor;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -24,10 +25,15 @@ public class EditorResource {
     @GET
     @Path("/{id}")
     public Editor get(@PathParam("id") Long id) {
-        return Editor.findById(id);
+        Editor editor = Editor.findById(id);
+        if (editor == null) {
+            throw new NotFoundException();
+        }
+        return editor;
     }
 
     @POST
+    @Transactional
     public Response create(Editor editor) {
         editor.persist();
         return Response.created(URI.create("/editors/" + editor.id)).build();
@@ -35,6 +41,7 @@ public class EditorResource {
 
     @PUT
     @Path("/{id}")
+    @Transactional
     public Editor update(@PathParam("id") Long id, Editor editor) {
         Editor existingEditor = Editor.findById(id);
         if (existingEditor == null) {
@@ -47,6 +54,7 @@ public class EditorResource {
 
     @DELETE
     @Path("/{id}")
+    @Transactional
     public void delete(@PathParam("id") Long id) {
         Editor editor = Editor.findById(id);
         if (editor == null) {
