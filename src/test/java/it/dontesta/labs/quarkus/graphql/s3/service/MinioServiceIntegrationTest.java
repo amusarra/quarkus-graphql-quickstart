@@ -31,11 +31,11 @@ class MinioServiceIntegrationTest {
             File tempFile = File.createTempFile("tempFile", ".txt");
 
             // Scrivi del testo nel file temporaneo
-            FileWriter writer = new FileWriter(tempFile);
+          try (FileWriter writer = new FileWriter(tempFile)) {
             writer.write("This is a test file for MinIO integration test");
-            writer.close();
+          }
 
-            // Upload file
+          // Upload file
             minioService.uploadObject(bucketName, objectName, tempFile.getAbsolutePath());
 
             // Verify file upload
