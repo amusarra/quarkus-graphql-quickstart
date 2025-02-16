@@ -63,6 +63,7 @@ jobs:
       - name: Build Native Image and Push Docker Image
         run: |
           quarkus image build --native \
+          -Dquarkus.native.additional-build-args=-march=native,-H:BuildOutputJSONFile=/tmp/native-image-build-output.json \
           -Dquarkus.native.container-build=false \
           -Dquarkus.container-image.push=true \
           -Dquarkus.container-image.registry=docker.io \
