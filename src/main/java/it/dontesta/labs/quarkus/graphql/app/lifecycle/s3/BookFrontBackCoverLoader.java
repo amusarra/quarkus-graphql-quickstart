@@ -140,7 +140,7 @@ public class BookFrontBackCoverLoader {
                 book.backCoverImageUrl = backCoverUrl;
 
                 // Update the Book entity
-                entityManager.persist(book);
+                entityManager.merge(book);
 
                 Log.debugf("Updated Book entity with ISBN {%s} with front cover URL {%s} and back cover URL {%s}", isbn,
                         frontCoverUrl, backCoverUrl);
