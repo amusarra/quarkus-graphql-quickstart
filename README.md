@@ -121,7 +121,7 @@ To start the application in development mode, use one of the following methods:
 quarkus dev
 ```
 
-> **Note**: Before starting the application in dev mode, make sure you have correctly installed and configured Docker or Podman on your system. In case of incorrect configuration or lack of Docker or Podman, the application will not start correctly and you may encounter errors like those reported below:
+> **Note**: Before starting the application in dev mode, make sure you have correctly installed and configured Docker or Podman on your system. In case of incorrect configuration or lack of Docker or Podman, the application will not start correctly, and you may encounter errors like those reported below:
 >
 > ```shell
 > 2025-01-29 09:33:31,911 WARN  [org.tes.doc.DockerClientProviderStrategy] (build-26) DOCKER_HOST unix:///var/run/docker.sock is not listening: java.io.IOException: com.sun.jna.LastErrorException: [61] Connection refused
@@ -1032,7 +1032,7 @@ Once the mutation is executed, GraphiQL will receive the real-time update with t
 
 ![Demo Subscription con GraphiQL](src/main/docs/resources/images/demo-subscription-graphql.gif)
 
-From the demo, it is evident that GraphiQL receives real-time updates via WebSocket whenever a new book is created. This demonstrates how GraphQL subscriptions are useful for receiving real-time updates without having to make repeated requests.
+From the demo, it is clear that GraphiQL receives real-time updates via WebSocket whenever a new book is created. This demonstrates how GraphQL subscriptions are useful for receiving real-time updates without having to make repeated requests.
 
 ## Accessing the MinIO Console
 When you start the application in Dev mode, you can access the MinIO console to upload and download files or simply to check the status of the Object Store. To access the MinIO console, open your browser and visit the URL: <http://localhost:8080/q/dev-ui/extensions>, identify the box named Minio Client extension, and access the console from there.
