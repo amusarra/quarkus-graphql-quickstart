@@ -8,6 +8,11 @@
 ![CI Docker build](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish.yml/badge.svg)
 ![CI Docker build native amd64](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish_native_quarkus_cli.yml/badge.svg)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=amusarra_quarkus-graphql-quickstart&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=amusarra_quarkus-graphql-quickstart)
+
+[![Docker Image Version (tag)](https://img.shields.io/docker/v/amusarra/quarkus-graphql-quickstart?label=Docker%20Hub%20Image%20)](https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart)
+[![Docker Image Version (tag)](https://img.shields.io/docker/v/amusarra/quarkus-graphql-quickstart-native?label=Docker%20Hub%20Native%20Image%20)](https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart-native)
+
 This project is a demonstration of a Quarkus application that exposes data through a traditional RESTful API (`quarkus-rest`) and a GraphQL API (`quarkus-smallrye-graphql`). The project uses Hibernate ORM with Panache (`quarkus-hibernate-orm-panache`) for data persistence and includes configurations for H2 database (for development), PostgreSQL (for production profiles), and MinIO as an S3 Object Store (`io.quarkiverse.minio:quarkus-minio`).
 
 [MinIO](https://min.io/) is a high-performance, distributed object storage server compatible with Amazon S3, easily integrable with Quarkus via the `quarkus-minio` extension and DevServices.
@@ -1199,3 +1204,8 @@ The Quarkus application will be started when the PostgreSQL and MinIO services a
 Antonio Musarra's Blog Team would like inform that JetBrains is helping by
 provided IDE to develop the application. Thanks to its support program for
 an Open Source projects!
+
+[![alt tag](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/project/overview?id=amusarra_quarkus-graphql-quickstart)
+
+This project is using SonarCloud for code quality.
+Thanks to SonarQube Team for free analysis solution for open source projects.
