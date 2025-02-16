@@ -13,6 +13,7 @@ INSERT INTO editor (id, name) VALUES (13, 'Vanguard Books');
 INSERT INTO editor (id, name) VALUES (14, 'Legacy Press');
 INSERT INTO editor (id, name) VALUES (15, 'Celestial Books');
 INSERT INTO editor (id, name) VALUES (16, 'Terra Publishing');
+INSERT INTO editor (id, name) VALUES (17, 'Delete Publishing');
 
 -- Insert into book (con editor_id direttamente)
 INSERT INTO book (id, title, sub_title, isbn, publication_date, genre, pages, summary, editor_id)
@@ -57,6 +58,8 @@ VALUES (15, 'The Art of Software Engineering', 'Best Practices for Development',
 INSERT INTO book (id, title, sub_title, isbn, publication_date, genre, pages, summary, editor_id)
 VALUES (16, 'Machine Learning Algorithms', 'Theory and Implementation', '9780596805190', '2022-06-01', 'Machine Learning', 500, 'In-depth analysis of machine learning algorithms', 16);
 
+INSERT INTO book (id, title, sub_title, isbn, publication_date, genre, pages, summary, editor_id)
+VALUES (17, 'Book to delete', 'Impl delete book', '0000596805190', '2022-06-01', 'Delete', 500, 'Delete without dependencies', 17);
 
 -- Insert into book_languages
 INSERT INTO book_languages (book_id, language) VALUES (3, 'eng');

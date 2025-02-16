@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+import io.quarkus.test.junit.QuarkusTest;
 import it.dontesta.labs.quarkus.graphql.s3.service.MinioService;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
@@ -24,6 +25,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+@QuarkusTest
 public class FileResourceTest {
 
     @Mock

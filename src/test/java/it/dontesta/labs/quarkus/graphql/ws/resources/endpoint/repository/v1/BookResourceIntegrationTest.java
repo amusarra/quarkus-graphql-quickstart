@@ -99,4 +99,64 @@ class BookResourceIntegrationTest {
                 .then()
                 .statusCode(204);
     }
+
+    @Test
+    void get_throwsNotFoundExceptionForNonExistentBook() {
+        Long nonExistentBookId = 999L; // Assumes a book with this ID does not exist
+
+        given()
+                .when().get("/api/books/" + nonExistentBookId)
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
+    @Transactional
+    void update_throwsNotFoundExceptionForNonExistentBook() {
+        Long nonExistentBookId = 999L; // Assumes a book with this ID does not exist
+        Book book = new Book();
+        book.title = "Non-Existent Book";
+        book.formats = List.of("PDF");
+        book.pages = 123;
+        book.isbn = "987654321";
+        book.genre = "Non-Fiction";
+        book.summary = "This is a non-existent book";
+        book.publication = LocalDate.now();
+        book.editor = new Editor();
+        book.editor.name = "Non-Existent Editor";
+        book.languages = List.of("EN");
+        book.keywords = List.of("Non-Existent", "Book");
+
+        given()
+                .contentType("application/json")
+                .body(book)
+                .when().put("/api/books/" + nonExistentBookId)
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
+    @Transactional
+    void addAuthors_throwsNotFoundExceptionForNonExistentBook() {
+        Long nonExistentBookId = 999L; // Assumes a book with this ID does not exist
+        List<Long> authorIds = List.of(1L, 2L); // Assumes authors with these IDs exist
+
+        given()
+                .contentType("application/json")
+                .body(authorIds)
+                .when().put("/api/books/" + nonExistentBookId + "/authors")
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
+    @Transactional
+    void delete_deletesBookWithId17() {
+        Long bookId = 17L; // Assumes a book with ID 17 exists
+
+        given()
+                .when().delete("/api/books/" + bookId)
+                .then()
+                .statusCode(204);
+    }
 }
