@@ -12,6 +12,8 @@ import java.util.Map;
 @ApplicationScoped
 public class CustomInfoContributor implements InfoContributor {
 
+    private static final String MINIO_CONNECTION_STATUS = "UP";
+
     @Override
     public String name() {
         return "app-detail-info";
@@ -37,13 +39,13 @@ public class CustomInfoContributor implements InfoContributor {
     // Metodo di esempio per simulare lo stato del feature flag (invariato)
     private boolean isNuovaDashboardAbilitata() {
         // Sostituisci con la logica reale
-        return true;
+        return Boolean.TRUE;
     }
 
     // Metodo di esempio per simulare lo stato della connessione MinIO 
     // (invariato, ma da implementare health check reale)
     private String getMinIOConnectionStatus() {
         // Sostituisci con la logica di health check MinIO reale
-        return "UP";
+        return MINIO_CONNECTION_STATUS;
     }
 }
