@@ -118,10 +118,8 @@ public class BookFrontBackCoverLoader {
                 .entrySet().stream()
                 .filter(entry -> entry.getValue().size() == 2)
                 .collect(Collectors.toMap(
-                        entry -> entry.getValue().stream().filter(name -> name.endsWith("front_cover.jpg")).findFirst()
-                                .orElse(null),
-                        entry -> entry.getValue().stream().filter(name -> name.endsWith("back_cover.jpg")).findFirst()
-                                .orElse(null)));
+                        entry -> entry.getValue().stream().filter(name -> name.endsWith("front_cover.jpg")).findFirst().orElseThrow(),
+                        entry -> entry.getValue().stream().filter(name -> name.endsWith("back_cover.jpg")).findFirst().orElseThrow()));
 
         // Logic to update Book entities with front and back cover URLs
         coverPairs.forEach((frontCover, backCover) -> {
