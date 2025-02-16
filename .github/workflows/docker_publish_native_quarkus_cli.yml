@@ -1,4 +1,4 @@
-name: CI build-publish native image with Quarkus CLI
+name: CI Build-Publish native image with Quarkus CLI
 
 # Define the events that trigger the workflow
 on:

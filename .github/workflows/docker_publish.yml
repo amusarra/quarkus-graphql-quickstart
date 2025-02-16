@@ -1,5 +1,5 @@
 # CI Docker build with maven build
-name: CI Docker build
+name: CI Docker Build
 
 on:
   # Trigger analysis when pushing in master or pull requests, and when creating

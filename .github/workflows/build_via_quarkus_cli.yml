@@ -1,6 +1,6 @@
 # This workflow will build a Java project with Quarkus CLI, and cache/restore
 # any dependencies to improve the workflow execution time.
-name: Build with Quarkus CLI
+name: CI Build with Quarkus CLI
 
 on:
   push:
