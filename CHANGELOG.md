@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 ### Security
 
-## [1.0.0] - 2025-01-01
+## [1.0.0] - 2025-02-17
 
 ### Added
 - Initial release of the Quarkus GraphQL Quickstart project.
