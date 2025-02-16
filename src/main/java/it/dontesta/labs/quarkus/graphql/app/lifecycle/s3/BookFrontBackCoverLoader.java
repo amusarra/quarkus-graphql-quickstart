@@ -151,6 +151,6 @@ public class BookFrontBackCoverLoader {
     /**
      * Event class to hold the upload event data.
      */
-    private record UploadEvent(String bucketName, List<String> uploadedFiles) {
+    public record UploadEvent(String bucketName, List<String> uploadedFiles) {
     }
 }
