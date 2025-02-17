@@ -25,8 +25,12 @@ import org.jboss.resteasy.reactive.multipart.FileUpload;
 @Path("/s3/files")
 public class FileResource {
 
+    private final MinioService minioService;
+
     @Inject
-    MinioService minioService;
+    public FileResource(MinioService minioService) {
+        this.minioService = minioService;
+    }
 
     @POST
     @Path("/upload")
