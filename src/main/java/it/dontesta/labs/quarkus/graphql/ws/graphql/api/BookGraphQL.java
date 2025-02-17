@@ -30,8 +30,12 @@ import java.util.List;
 @ApplicationScoped
 public class BookGraphQL {
 
+    private final EntityManager entityManager;
+
     @Inject
-    EntityManager entityManager;
+    public BookGraphQL(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     /**
      * Retrieves a paginated list of books.
