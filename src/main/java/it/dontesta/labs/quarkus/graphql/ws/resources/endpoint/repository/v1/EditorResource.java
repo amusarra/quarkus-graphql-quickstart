@@ -19,13 +19,13 @@ public class EditorResource {
 
     @GET
     public List<Editor> list() {
-        return Editor.listAll();
+        return Editor.listAllEditors();
     }
 
     @GET
     @Path("/{id}")
     public Editor get(@PathParam("id") Long id) {
-        Editor editor = Editor.findById(id);
+        Editor editor = Editor.findEditorById(id);
         if (editor == null) {
             throw new NotFoundException();
         }
@@ -43,7 +43,7 @@ public class EditorResource {
     @Path("/{id}")
     @Transactional
     public Editor update(@PathParam("id") Long id, Editor editor) {
-        Editor existingEditor = Editor.findById(id);
+        Editor existingEditor = Editor.findEditorById(id);
         if (existingEditor == null) {
             throw new NotFoundException();
         }
@@ -56,7 +56,7 @@ public class EditorResource {
     @Path("/{id}")
     @Transactional
     public void delete(@PathParam("id") Long id) {
-        Editor editor = Editor.findById(id);
+        Editor editor = Editor.findEditorById(id);
         if (editor == null) {
             throw new NotFoundException();
         }

@@ -125,7 +125,7 @@ public class BookFrontBackCoverLoader {
         coverPairs.forEach((frontCover, backCover) -> {
             var isbn = frontCover.split("_")[0];
 
-            Book book = Book.find("isbn", isbn).firstResult();
+            Book book = Book.findBookByQuery("isbn", isbn);
 
             if (book != null) {
                 Map<String, Object> frontCoverDetails = minioService.getObjectDetails(bucketName, frontCover);
