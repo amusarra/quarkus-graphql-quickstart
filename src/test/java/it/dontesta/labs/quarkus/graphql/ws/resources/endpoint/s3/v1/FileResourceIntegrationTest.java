@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Path;
 
 @QuarkusTest
-public class FileResourceIntegrationTest {
+class FileResourceIntegrationTest {
 
     @Test
     void uploadNonExistentFile() throws IOException {

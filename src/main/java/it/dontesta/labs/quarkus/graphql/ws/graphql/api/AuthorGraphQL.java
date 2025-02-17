@@ -18,13 +18,13 @@ public class AuthorGraphQL {
     @Query
     @Description("Get all authors")
     public List<Author> allAuthors() {
-        return Author.listAll();
+        return Author.findAllAuthors();
     }
 
     @Query
     @Description("Get an author by id")
     public Author getAuthor(@Name("authorId") Long id) {
-        return Author.findById(id);
+        return Author.findAuthorById(id);
     }
 
     @Mutation
