@@ -97,4 +97,15 @@ public class Book extends PanacheEntity {
     public static Book findBookById(Long id) {
         return findById(id);
     }
+
+    /**
+     * Finds a book by a query.
+     *
+     * @param query the query to execute.
+     * @param params the query parameters.
+     * @return the book matching the specified query, or null if no such book exists.
+     */
+    public static Book findBookByQuery(String query, Object... params) {
+        return find(query, params).firstResult();
+    }
 }
