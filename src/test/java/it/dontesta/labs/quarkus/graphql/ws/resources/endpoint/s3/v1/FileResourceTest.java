@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @QuarkusTest
-public class FileResourceTest {
+class FileResourceTest {
 
     @Mock
     MinioService minioService;
@@ -40,7 +40,7 @@ public class FileResourceTest {
     }
 
     @Test
-    void uploadFileSuccessfully() throws Exception {
+    void uploadFileSuccessfully() {
         String bucketName = "test-bucket";
         String objectName = "test-object";
         FileUpload fileUpload = mock(FileUpload.class);
@@ -58,7 +58,7 @@ public class FileResourceTest {
     }
 
     @Test
-    void uploadFileThrowsException() throws Exception {
+    void uploadFileThrowsException() {
         String bucketName = "test-bucket";
         String objectName = "test-object";
         FileUpload fileUpload = mock(FileUpload.class);

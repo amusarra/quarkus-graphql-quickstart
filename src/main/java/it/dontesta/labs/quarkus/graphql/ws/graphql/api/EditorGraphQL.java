@@ -19,13 +19,13 @@ public class EditorGraphQL {
     @Query
     @Description("Get all editors")
     public List<Editor> allEditors() {
-        return Editor.listAll();
+        return Editor.listAllEditors();
     }
 
     @Query
     @Description("Get an editor by id")
     public Editor getEditor(@Name("editorId") Long id) {
-        return Editor.findById(id);
+        return Editor.findEditorById(id);
     }
 
     @Mutation

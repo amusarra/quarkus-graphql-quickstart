@@ -5,6 +5,7 @@
 package it.dontesta.labs.quarkus.graphql.orm.panache.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -68,4 +69,32 @@ public class Book extends PanacheEntity {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "editor_id")
     public Editor editor;
+
+    /**
+     * Finds all books.
+     *
+     * @return a list of all books.
+     */
+    public static PanacheQuery<Book> findAllBooks() {
+        return findAll();
+    }
+
+    /**
+     * Finds all books.
+     *
+     * @return a list of all books.
+     */
+    public static List<Book> findAllBooksList() {
+        return listAll();
+    }
+
+    /**
+     * Finds a book by its ID.
+     *
+     * @param id the ID of the book to find.
+     * @return the book with the specified ID, or null if no such book exists.
+     */
+    public static Book findBookById(Long id) {
+        return findById(id);
+    }
 }

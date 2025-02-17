@@ -32,4 +32,34 @@ public class Author extends PanacheEntity {
     @ManyToMany(mappedBy = "authors")
     @JsonBackReference
     public List<Book> books;
+
+    /**
+     * Finds all authors.
+     *
+     * @return a list of all authors.
+     */
+    public static List<Author> findAllAuthors() {
+        return listAll();
+    }
+
+    /**
+     * Finds an author by their ID.
+     *
+     * @param id the ID of the author to find.
+     * @return the author with the specified ID, or null if no such author exists.
+     */
+    public static Author findAuthorById(Long id) {
+        return findById(id);
+    }
+
+    /**
+     * Finds authors by a list of IDs.
+     *
+     * @param query the query to execute.
+     * @param authorIds the list of author IDs to find.
+     * @return a list of authors matching the specified IDs.
+     */
+    public static List<Author> listByAuthorList(String query, List<Long> authorIds) {
+        return list(query, authorIds);
+    }
 }

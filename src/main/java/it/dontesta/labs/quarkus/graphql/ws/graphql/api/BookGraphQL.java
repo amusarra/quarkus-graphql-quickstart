@@ -61,7 +61,7 @@ public class BookGraphQL {
         }
 
         // Query Panache to get the books
-        PanacheQuery<Book> query = Book.findAll();
+        PanacheQuery<Book> query = Book.findAllBooks();
         List<Book> books = query.range(startIndex, startIndex + first - 1).list();
 
         // Create the edges response with the cursor
@@ -87,7 +87,7 @@ public class BookGraphQL {
     @Query
     @Description("Get all books")
     public List<Book> allBooks() {
-        return Book.listAll();
+        return Book.findAllBooksList();
     }
 
     /**
@@ -99,7 +99,7 @@ public class BookGraphQL {
     @Query
     @Description("Get a book by id")
     public Book getBook(@Name("bookId") Long id) {
-        return Book.findById(id);
+        return Book.findBookById(id);
     }
 
     /**
@@ -145,7 +145,7 @@ public class BookGraphQL {
         if (book == null) {
             throw new GraphQLException("Book not found with Id %d".formatted(bookId));
         }
-        List<Author> authors = Author.list("id in ?1", authorIds);
+        List<Author> authors = Author.listByAuthorList("id in ?1", authorIds);
         book.authors.addAll(authors);
         return book;
     }
@@ -168,7 +168,7 @@ public class BookGraphQL {
      */
     private void handleEditor(Book book) throws GraphQLException {
         if (book.editor != null && book.editor.id != null) {
-            Editor foundEditor = Editor.findById(book.editor.id);
+            Editor foundEditor = Editor.findEditorById(book.editor.id);
             if (foundEditor == null) {
                 throw new GraphQLException("Editor not found with Id %d".formatted(book.editor.id));
             }
@@ -187,7 +187,7 @@ public class BookGraphQL {
             List<Author> updatedAuthors = new ArrayList<>();
             for (Author author : book.authors) {
                 if (author.id != null) {
-                    Author foundAuthor = Author.findById(author.id);
+                    Author foundAuthor = Author.findAuthorById(author.id);
                     if (foundAuthor == null) {
                         throw new GraphQLException("Author not found with Id %d".formatted(author.id));
                     }
