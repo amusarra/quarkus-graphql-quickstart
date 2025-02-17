@@ -23,8 +23,12 @@ import org.eclipse.microprofile.graphql.Query;
 @ApplicationScoped
 public class FileGraphQL {
 
+    private final MinioService minioService;
+
     @Inject
-    MinioService minioService;
+    public FileGraphQL(MinioService minioService) {
+        this.minioService = minioService;
+    }
 
     @Query("getFile")
     @Description("Obtain a file from the S3 bucket")
