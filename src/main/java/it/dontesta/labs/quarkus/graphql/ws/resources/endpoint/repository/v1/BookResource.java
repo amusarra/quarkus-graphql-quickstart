@@ -28,13 +28,13 @@ public class BookResource {
 
     @GET
     public List<Book> list() {
-        return Book.listAll();
+        return Book.findAllBooksList();
     }
 
     @GET
     @Path("/{id}")
     public Book get(@PathParam("id") Long id) {
-        Book book = Book.findById(id);
+        Book book = Book.findBookById(id);
         if (book == null) {
             throw new NotFoundException();
         }
@@ -59,7 +59,7 @@ public class BookResource {
         // because it is a Panache entity.
         // Extend this method to handle the detached entity as needed.
 
-        Book entity = Book.findById(id);
+        Book entity = Book.findBookById(id);
         if (entity == null) {
             throw new NotFoundException();
         }
@@ -79,7 +79,7 @@ public class BookResource {
     @Path("{id}")
     @Transactional
     public void delete(@PathParam("id") Long id) {
-        Book entity = Book.findById(id);
+        Book entity = Book.findBookById(id);
         if (entity != null) {
             entity.delete();
         }
@@ -89,12 +89,12 @@ public class BookResource {
     @Path("{id}/authors")
     @Transactional
     public Book addAuthors(@PathParam("id") Long id, List<Long> authorIds) {
-        Book book = Book.findById(id);
+        Book book = Book.findBookById(id);
         if (book == null) {
             throw new NotFoundException("Book not found");
         }
 
-        List<Author> authors = Author.list("id in ?1", authorIds);
+        List<Author> authors = Author.listByAuthorList("id in ?1", authorIds);
         book.authors.addAll(authors);
         return book;
     }

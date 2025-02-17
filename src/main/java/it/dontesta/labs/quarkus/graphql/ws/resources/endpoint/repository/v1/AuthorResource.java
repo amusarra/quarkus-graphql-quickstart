@@ -19,13 +19,13 @@ public class AuthorResource {
 
     @GET
     public List<Author> list() {
-        return Author.listAll();
+        return Author.findAllAuthors();
     }
 
     @GET
     @Path("/{id}")
     public Author get(@PathParam("id") Long id) {
-        Author author = Author.findById(id);
+        Author author = Author.findAuthorById(id);
         if (author == null) {
             throw new NotFoundException();
         }
@@ -43,7 +43,7 @@ public class AuthorResource {
     @Path("/{id}")
     @Transactional
     public Author update(@PathParam("id") Long id, Author author) {
-        Author existingAuthor = Author.findById(id);
+        Author existingAuthor = Author.findAuthorById(id);
         if (existingAuthor == null) {
             throw new NotFoundException();
         }
@@ -61,7 +61,7 @@ public class AuthorResource {
     @Path("/{id}")
     @Transactional
     public void delete(@PathParam("id") Long id) {
-        Author author = Author.findById(id);
+        Author author = Author.findAuthorById(id);
         if (author == null) {
             throw new NotFoundException();
         }
