@@ -8,8 +8,14 @@
 ![CI Docker build](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish.yml/badge.svg)
 ![CI Docker build native amd64](https://github.com/amusarra/quarkus-graphql-quickstart/actions/workflows/docker_publish_native_quarkus_cli.yml/badge.svg)
 
-[![Docker Image Version (tag)](https://img.shields.io/docker/v/amusarra/quarkus-graphql-quickstart?label=Docker%20Hub%20Image%20)](https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart)
-[![Docker Image Version (tag)](https://img.shields.io/docker/v/amusarra/quarkus-graphql-quickstart-native?label=Docker%20Hub%20Native%20Image%20)](https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart-native)
+## Container Images
+
+| Image                                        | Latest Tag                                                                                                                     | Repository Link                                                                   | Pull Command                                                                                                                            |
+|----------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| `amusarra/quarkus-graphql-quickstart`        | ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/amusarra/quarkus-graphql-quickstart?sort=date)        | [Docker Hub](https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart)        | `docker pull amusarra/quarkus-graphql-quickstart:latest`<br/>or `podman pull amusarra/quarkus-graphql-quickstart:latest`                |
+| `amusarra/quarkus-graphql-quickstart-native` | ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/amusarra/quarkus-graphql-quickstart-native?sort=date) | [Docker Hub](https://hub.docker.com/r/amusarra/quarkus-graphql-quickstart-native) | `docker pull amusarra/quarkus-graphql-quickstart-native:latest` <br/>or `podman pull amusarra/quarkus-graphql-quickstart-native:latest` |
+
+Form more information about the tags available, please visit the Docker Hub repository.
 
 ## SonarQube Report (cloud)
 
@@ -22,6 +28,7 @@
 | Coverage        | ![Coverage](https://sonarcloud.io/api/project_badges/measure?project=amusarra_quarkus-graphql-quickstart&metric=coverage)                     |
 | Duplications    | ![Duplications](https://sonarcloud.io/api/project_badges/measure?project=amusarra_quarkus-graphql-quickstart&metric=duplicated_lines_density) |
 
+For more information, visit the [SonarCloud Dashboard](https://sonarcloud.io/dashboard?id=amusarra_quarkus-graphql-quickstart).
 
 ## Project Overview
 This project is a demonstration of a Quarkus application that exposes data through a traditional RESTful API (`quarkus-rest`) and a GraphQL API (`quarkus-smallrye-graphql`). The project uses Hibernate ORM with Panache (`quarkus-hibernate-orm-panache`) for data persistence and includes configurations for H2 database (for development), PostgreSQL (for production profiles), and MinIO as an S3 Object Store (`io.quarkiverse.minio:quarkus-minio`).
