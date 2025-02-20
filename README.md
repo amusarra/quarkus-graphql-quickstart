@@ -1217,6 +1217,10 @@ The Quarkus application will be started when the PostgreSQL and MinIO services a
 - MinIO ([guide](https://quarkus.io/extensions/io.quarkiverse.minio/quarkus-minio/)): Use MinIO as an Object Store S3
 - OpenShift ([guide](https://quarkus.io/guides/deploying-to-openshift)): Generate OpenShift resources from annotations
 - Using Podman with Quarkus ([guide](https://quarkus.io/guides/podman))
+
+## 🚀 Support the project
+If you like the project, please, give a star to the project. It's free! 😊
+
 ## Team Tools
 
 [![alt tag](http://pylonsproject.org/img/logo-jetbrains.png)](https://www.jetbrains.com/?from=LiferayPortalSecurityAudit)
