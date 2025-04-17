@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 ### Security
 
+## [1.1.0] - 2025-04-17
+
+### Changed
+- Changed: update the Quarkus version to 3.21.3
+
 ## [1.0.1] - 2025-02-17
 
 ### Fixed
