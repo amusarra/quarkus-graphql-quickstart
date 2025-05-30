@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>it.dontesta.labs.quarkus.graphql</groupId>
     <artifactId>quarkus-graphql-quickstart</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.2.0</version>
     <description>Quarkus GraphQL Quickstart + MinIO as Object Store S3. It's much more than just a Quickstart</description>
     <organization>
         <name>Antonio Musarra's Blog</name>
@@ -34,7 +34,8 @@
         <connection>scm:git:git@github.com:amusarra/quarkus-graphql-quickstart.git</connection>
         <developerConnection>scm:git:git@github.com:amusarra/quarkus-graphql-quickstart.git</developerConnection>
         <url>scm:git:git@github.com:amusarra/quarkus-graphql-quickstart.git</url>
-    </scm>
+      <tag>1.2.0</tag>
+  </scm>
     <properties>
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
         <maven.compiler.release>21</maven.compiler.release>
