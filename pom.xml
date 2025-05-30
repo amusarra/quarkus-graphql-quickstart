@@ -30,6 +30,11 @@
             </roles>
         </developer>
     </developers>
+    <scm>
+        <connection>scm:git:git@github.com:amusarra/quarkus-graphql-quickstart.git</connection>
+        <developerConnection>scm:git:git@github.com:amusarra/quarkus-graphql-quickstart.git</developerConnection>
+        <url>scm:git:git@github.com:amusarra/quarkus-graphql-quickstart.git</url>
+    </scm>
     <properties>
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
         <maven.compiler.release>21</maven.compiler.release>
