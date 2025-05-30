@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>it.dontesta.labs.quarkus.graphql</groupId>
     <artifactId>quarkus-graphql-quickstart</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.2.1-SNAPSHOT</version>
     <description>Quarkus GraphQL Quickstart + MinIO as Object Store S3. It's much more than just a Quickstart</description>
     <organization>
         <name>Antonio Musarra's Blog</name>
@@ -30,6 +30,12 @@
             </roles>
         </developer>
     </developers>
+    <scm>
+        <connection>scm:git:git@github.com:amusarra/quarkus-graphql-quickstart.git</connection>
+        <developerConnection>scm:git:git@github.com:amusarra/quarkus-graphql-quickstart.git</developerConnection>
+        <url>scm:git:git@github.com:amusarra/quarkus-graphql-quickstart.git</url>
+      <tag>HEAD</tag>
+  </scm>
     <properties>
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
         <maven.compiler.release>21</maven.compiler.release>
@@ -37,8 +43,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.21.3</quarkus.platform.version>
-        <quarkus.minio.version>3.8.1</quarkus.minio.version>
+        <quarkus.platform.version>3.23.0</quarkus.platform.version>
+        <quarkus.minio.version>3.8.4</quarkus.minio.version>
         <skipITs>true</skipITs>
         <sonar.coverage.jacoco.xmlReportPaths>target/jacoco-report/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
